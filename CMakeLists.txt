@@ -5,5 +5,6 @@ Project(Carbon)
 set(INC_CARBON_BASE Carbon)
 set(SRC_CARBON_BASE details)
 include(details/CMakeLists.txt)
+include_directories(${INC_CARBON_ALL})
 add_library(Carbon SHARED ${SRC_CARBON_ALL})
 
