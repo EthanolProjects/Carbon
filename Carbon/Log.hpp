@@ -15,7 +15,7 @@ namespace Carbon {
             Entry(const char* func, const char* file, std::int32_t line, std::int32_t sev, Logger& hst);
             ~Entry();
             template <class T>
-            Entry& operator << (T&& rhs) { mStringBuf << rhs; return *this; }
+            Entry& operator << (T&& rhs) { mStreamBuf << rhs; return *this; }
         private:
             Logger& mHost;
             const char* mFunc;
@@ -25,7 +25,7 @@ namespace Carbon {
         };
         template <class Sev>
         auto operator()(const char* func, const char* file, std::int32_t line, Sev sev = Sev()) {
-            return Entry(func, file, line, static_cast<std::int32_t>(sev));
+            return Entry(func, file, line, static_cast<std::int32_t>(sev), *this);
         }
     private:
         void recordEntry(const char* func, const char* file, std::int32_t line, std::int32_t sev, std::stringstream& buffer);
