@@ -1,8 +1,9 @@
 #pragma once
+#include "Config.hpp"
 #include <cstdint>
 #include <sstream>
 namespace Carbon {
-    class Logger{
+    class CARBON_API Logger{
     public:
         // Default Constructable
         Logger() = default;
