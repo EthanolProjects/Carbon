@@ -20,7 +20,7 @@ namespace Carbon {
         };
         template <class FuncPT>
         FuncPT loadCXXFunction(const char* name, ABI abi = ABI::Local) {
-            return FuncPT(loadCXXFunctionImpl(name, ABIType));
+            return FuncPT(loadCXXFunctionImpl(name, abi));
         }
     private:
         void* loadCFunctionImpl(const char* name);

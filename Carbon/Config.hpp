@@ -8,7 +8,7 @@
 #        define IMPORT __declspec(dllimport)
 #    endif
 #else
-#    define EXPORT __attribute__ ((visibility ("visible")))
+#    define EXPORT __attribute__ ((visibility ("default")))
 #    define IMPORT
 #endif
 

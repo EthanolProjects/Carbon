@@ -23,13 +23,13 @@ namespace Carbon {
     private:
         HINSTANCE mLibrary;
     };
-#elif CARBON_TARGET_LINUX || CARBON_TARGET_MACOSX
+#elif CARBON_TARGET_LINUX || CARBON_TARGET_APPLE
 #include <dlfcn.h>
     class DynamicLibrary::DyImpl {
     public:
         DyImpl(const char* path) {
             mLibrary = dlopen(path,RTLD_NOW);
-            auto error=dlerror();
+            auto error = dlerror();
             if (mLibrary == nullptr || error){
                 throw std::runtime_error(static_cast<char*>(error));
             }
@@ -73,7 +73,7 @@ namespace Carbon {
             pathFull += ".dll";
 #elif defined CARBON_TARGET_LINUX
             pathFull += ".so";
-#elif defined CARBON_TARGET_DARWIN
+#elif defined CARBON_TARGET_APPLE
             pathFull += ".dylib";
 #endif 
         }
