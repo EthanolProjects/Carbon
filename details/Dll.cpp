@@ -1,7 +1,7 @@
 #include "Dll.hpp"
 #include <stdexcept>
 namespace Carbon {
-#if defined CARBON_TARGET_WINDOWS
+#ifdef CARBON_TARGET_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <Windows.h>
@@ -23,8 +23,27 @@ namespace Carbon {
     private:
         HINSTANCE mLibrary;
     };
-#else
-
+#elif CARBON_TARGET_LINUX || CARBON_TARGET_MACOSX
+#include <dlfcn.h>
+    class DynamicLibrary::DyImpl {
+    public:
+        DyImpl(const char* path) {
+            mLibrary = dlopen(path,RTLD_NOW);
+            auto error=dlerror();
+            if (mLibrary == nullptr || error){
+                throw std::runtime_error(static_cast<char*>(error));
+            }
+        }
+        ~DyImpl() {
+            if (mLibrary)
+                dlclose(mLibrary);
+        }
+        void* getFunction(const char* name) {
+            return dlsym(mLibrary, name);
+        }
+    private:
+        void* mLibrary;
+    };
 #endif
 
     DynamicLibrary::DynamicLibrary(): mImpl(nullptr) {}
@@ -44,6 +63,7 @@ namespace Carbon {
             mImpl = rhs.mImpl;
             rhs.mImpl = nullptr;
         }
+        return *this;
     }
 
     DynamicLibrary::DynamicLibrary(const char * path, bool needSuffixAdded) {
