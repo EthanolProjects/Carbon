@@ -4,7 +4,30 @@
 namespace Carbon {
 
     namespace TppDetail{
-        
+        LockFreeList::LockFreeList():m_head(nullptr){}
+        LockFreeList::~LockFreeList(){
+            Node* it; 
+            while (it=m_head) {m_head=it->next; delete it;}
+        }
+
+        void LockFreeList::addTask(const TaskInfo& task){
+            auto newHead=std::make_unique<Node>();
+            newHead->next=m_head;
+            newHead->task=std::make_unique<TaskInfo>(std::move(task));
+
+            while(!m_head.compare_exchange_weak(newHead->next,newHead.get()));
+            newHead.release();
+        }
+
+        std::unique_ptr<TaskInfo> LockFreeList::getTask(){
+            if(m_head==nullptr)return nullptr;
+            Node* node=nullptr;
+            while(!m_head.compare_exchange_weak(node,m_head->next));
+            auto task=node->task->release();
+            delete node;
+            return task;
+        }
+
         PoolThread::PoolThread(LockFreeList& source)
             :m_source(source),m_flag(true),m_thread([this]{runThread();}){}
 
@@ -38,9 +61,11 @@ namespace Carbon {
     }
     TaskSetState::TaskSetState(size_t num):m_state(num,false){}
 
+    bool TaskSetState::test() const{
+        return std::any_of(m_state.cbegin(),m_state.cend(),[](bool x){return !x;});
+    }
     void TaskSetState::wait() const{
-        while(std::any_of(m_state.cbegin(),m_state.cend(),[](bool x){return !x;}))
-            std::this_thread::yield();
+        while(test)std::this_thread::yield();
     }
 
     void TaskSetState::finished(size_t id){
@@ -54,13 +79,4 @@ namespace Carbon {
             m_threads.emplace_back(m_queue);
     }
 
-    std::shared_ptr<TaskSetState> ThreadPool::addTasks(const TaskSet& tasks){
-        auto res=std::make_shared<TaskSetState>(tasks.size());
-        size_t id=0;
-        for(Task&& task:tasks){
-            m_source.addTask({task,res,id});
-            ++id;
-        }
-        return res;
-    }
 }
