@@ -1,5 +1,6 @@
 #include "Config.hpp"
 #include "Mpl.hpp"
+#include <future>
 namespace Carbon {
     class CARBON_API Task
     {
@@ -10,7 +11,7 @@ namespace Carbon {
         Task(const Task&) = delete;
         Task& operator = (const Task&) = delete;
         virtual ~Task() = default;
-        virtual void run() = 0;
+        virtual void run() noexcept = 0;
     };
 
     namespace TppDetail {
@@ -21,18 +22,25 @@ namespace Carbon {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
             TaskFunc(Callable call, Ts&&... args): 
-                mCallable(call), mTuple(std::forward_as_tuple(args...)) 
+                mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) 
             {}
-            void run() override { Apply(mCallable , mTuple); }
+            void run() noexcept override { 
+                try {
+                    mPromise.set_value(Apply(mCallable, mTuple));
+                }
+                catch (...) {
+                    try {
+                        mPromise.set_exception(std::current_exception());
+                    }
+                    catch (...) {} 
+                }
+            }
+            auto getFuture() { return mPromise.get_future(); }
         private:
             Callable mCallable;
             std::tuple<Ts...> mTuple;
+            std::promise<ReturnType> mPromise;
         };
 
-    }
-    // FIXME: Requires Better Implementation
-    template <class Callable>
-    auto encloseTask(Callable callable) {
-        return std::make_unique< TppDetail::TaskFunc<Callable>>(callable);
     }
 }

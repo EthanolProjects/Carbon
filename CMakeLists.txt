@@ -16,4 +16,6 @@ set(SRC_CARBON_BASE details)
 include(details/CMakeLists.txt)
 include_directories(${INC_CARBON_ALL})
 add_library(Carbon SHARED ${SRC_CARBON_ALL})
+add_executable(CarbonTest tests/Tests.cpp)
+target_link_libraries(CarbonTest Carbon)
 
