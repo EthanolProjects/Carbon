@@ -19,7 +19,6 @@ namespace Carbon {
             void runThread();
             std::thread m_thread;
             TaskQueue* m_source;
-            bool m_flag;
         };
 
         class CARBON_API TaskQueue final {
@@ -37,6 +36,7 @@ namespace Carbon {
     class CARBON_API ThreadPool final {
     public:
         ThreadPool(size_t num = 0);
+        ~ThreadPool();
         void addTask(std::unique_ptr<Task>&& task) {
             m_source.addTask(std::move(task));
         }
