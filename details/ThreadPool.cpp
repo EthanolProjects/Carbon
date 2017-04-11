@@ -3,33 +3,26 @@
 
 namespace Carbon {
     namespace TppDetail {
-        LockFreeList::LockFreeList() :m_head(nullptr) {}
-        LockFreeList::~LockFreeList() {
-            Node* it;
-            while (it = m_head) { m_head = it->next; delete it; }
+        TaskQueue::TaskQueue() {}
+        TaskQueue::~TaskQueue() {
         }
 
-        void LockFreeList::addTask(std::unique_ptr<Task>&& task) {
-            auto newHead = std::make_unique<Node>();
-            newHead->next = m_head;
-            newHead->task = std::move(task);
-            while (!m_head.compare_exchange_weak(newHead->next, newHead.get()));
-            newHead.release();
+        void TaskQueue::addTask(std::unique_ptr<Task>&& task) {
+            std::lock_guard<std::mutex> lk(mMutex);
+            mQueue.push(std::move(task));
         }
 
-        std::unique_ptr<Task> LockFreeList::getTask() {
-            if (m_head == nullptr)return nullptr;
-            Node *node = nullptr, *next;
-            do {
-                node = m_head.load();
-                next = node ? node->next : nullptr;
-            } while (!m_head || !m_head.compare_exchange_weak(node, next));
-            auto task = node ? std::move(node->task) : nullptr;
-            delete node;
-            return task;
+        std::unique_ptr<Task> TaskQueue::getTask() {
+            std::lock_guard<std::mutex> lk(mMutex);
+            if (mQueue.size()) {
+                auto task = std::move(mQueue.front());
+                mQueue.pop();
+                return task;
+            }
+            return nullptr;
         }
 
-        void PoolThread::setSource(LockFreeList& source) {
+        void PoolThread::setSource(TaskQueue& source) {
             m_source = &source;
             m_flag = true;
             m_thread = std::thread([this]() { runThread(); });
@@ -49,7 +42,7 @@ namespace Carbon {
         PoolThread::~PoolThread() {
             m_flag = false;
             if (m_thread.joinable())
-                m_thread.detach();
+                m_thread.join();
         }
     }
    

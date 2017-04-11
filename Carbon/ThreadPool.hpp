@@ -2,36 +2,35 @@
 #include <atomic>
 #include <memory>
 #include <chrono>
+#include <mutex>
+#include <queue>
 #include <vector>
 #include "Task.hpp"
 
 namespace Carbon {
     class CARBON_API ThreadPool;
     namespace TppDetail {
-        class CARBON_API LockFreeList;
+        class CARBON_API TaskQueue;
         class CARBON_API PoolThread final {
         public:
-            void setSource(LockFreeList& source);
+            void setSource(TaskQueue& source);
             ~PoolThread();
         private:
             void runThread();
             std::thread m_thread;
-            LockFreeList* m_source;
+            TaskQueue* m_source;
             bool m_flag;
         };
 
-        class CARBON_API LockFreeList final {
+        class CARBON_API TaskQueue final {
         public:
-            LockFreeList();
-            ~LockFreeList();
+            TaskQueue();
+            ~TaskQueue();
             void addTask(std::unique_ptr<Task>&& task);
             std::unique_ptr<Task> getTask();
         private:
-            struct Node final {
-                std::unique_ptr<Task> task = nullptr;
-                Node* next = nullptr;
-            };
-            std::atomic<Node*> m_head;
+            std::mutex mMutex;
+            std::queue<std::unique_ptr<Task>> mQueue;
         };
     }
 
@@ -43,7 +42,7 @@ namespace Carbon {
         }
     private:
         std::unique_ptr<TppDetail::PoolThread[]> m_threads;
-        TppDetail::LockFreeList m_source;
+        TppDetail::TaskQueue m_source;
     };
 
     template<class Callable, class ...Ts>
