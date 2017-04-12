@@ -3,8 +3,8 @@
 #include <vector>
 #include <chrono>
 #include <future>
-constexpr int testCount = 3000000;
-int testAsync(std::launch pol) {
+constexpr int testCount = 300000;
+double testAsync(std::launch pol) {
     auto obj = []() {
         return 1;
     };
@@ -21,9 +21,9 @@ int testAsync(std::launch pol) {
     return (clock::now() - start) / 1us;
 }
 
-int testThreadPool() {
+double testThreadPool() {
     using namespace Carbon;
-    ThreadPool pool{0};
+    static ThreadPool pool{0};
     auto obj = []() {
         return 1;
     };
@@ -44,11 +44,10 @@ int testThreadPool() {
 int main() {
     std::cout << "Async Benchmark for Small Tasks:" << testCount << "ops" << std::endl;
     std::cout << "Default|Aync|Deferred|ThreadPool" << std::endl;
-    for (size_t i = 0; i < 5; ++i) {
-        std::cout << testAsync(std::launch::async | std::launch::deferred) << '|';
-        std::cout << testAsync(std::launch::async) << '|';
-        std::cout << testAsync(std::launch::deferred) << '|';
-        std::cout << testThreadPool() << std::endl;
+    for (size_t i = 0; i < 20; ++i) {
+        std::cout << testAsync(std::launch::async | std::launch::deferred) << '|' <<
+            testAsync(std::launch::async) << '|' << testAsync(std::launch::deferred) <<
+            '|' << testThreadPool() << std::endl;
     }
     system("pause");
 }

@@ -1,9 +1,6 @@
 #include <thread>
-#include <atomic>
 #include <memory>
 #include <chrono>
-#include <mutex>
-#include <queue>
 #include <vector>
 #include "Task.hpp"
 #include "../ThirdParty/LockFree/lock_free_queue.h"
@@ -20,6 +17,7 @@ namespace Carbon {
             void runThread();
             std::thread m_thread;
             TaskQueue* m_source;
+            bool m_flag;
         };
 
         class CARBON_API TaskQueue final {
@@ -29,17 +27,14 @@ namespace Carbon {
             void addTask(Task* task);
             Task* getTask();
         private:
-            std::mutex mMutex;
-            ArrayLockFreeQueue<Task*, 10000, 
+            ArrayLockFreeQueue<Task*, 350000, 
                 ArrayLockFreeQueueMultipleProducers> mQueue;
-            //std::queue<std::unique_ptr<Task>> mQueue;
         };
     }
 
     class CARBON_API ThreadPool final {
     public:
         ThreadPool(size_t num = 0);
-        ~ThreadPool();
         void addTask(Task* task) {
             m_source.addTask(task);
         }

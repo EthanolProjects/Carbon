@@ -48,7 +48,7 @@
 // define this macro if calls to "size" must return the real size of the 
 // queue. If it is undefined  that function will try to take a snapshot of 
 // the queue, but returned value might be bogus
-#define _WITH_LOCK_FREE_Q_KEEP_REAL_SIZE
+//#define _WITH_LOCK_FREE_Q_KEEP_REAL_SIZE
 
 // forward declarations for default template values
 //

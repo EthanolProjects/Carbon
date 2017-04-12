@@ -4,41 +4,38 @@
 namespace Carbon {
     namespace TppDetail {
         TaskQueue::TaskQueue() {}
-        TaskQueue::~TaskQueue() {}
+        TaskQueue::~TaskQueue() {
+        }
 
         void TaskQueue::addTask(Task* task) {
-            //std::lock_guard<std::mutex> lk(mMutex);
             mQueue.push(task);
         }
 
         Task* TaskQueue::getTask() {
-            //std::lock_guard<std::mutex> lk(mMutex);
             Task* ret = nullptr;
-            if (mQueue.size()) {
-                //auto task = std::move(mQueue.front());
-                mQueue.pop(ret);
-                //return task;
-            }
-            return ret;
+            auto success = mQueue.pop(ret);
+            return success ? ret : nullptr;
         }
 
         void PoolThread::setSource(TaskQueue& source) {
             m_source = &source;
+            m_flag = true;
             m_thread = std::thread([this]() { runThread(); });
         }
 
         void PoolThread::runThread() {
             Task* task = nullptr;
-            while (true) {
-                while (m_source && !(task = m_source->getTask()))
+            while (m_flag) {
+                while (m_flag && m_source && !(task = m_source->getTask()))
                     std::this_thread::yield();
-                if (!m_source)break;
+                if (!m_flag)break;
                 task->run();
                 delete task;
             }
         }
+
         PoolThread::~PoolThread() {
-            m_source = nullptr;
+            m_flag = false;
             if (m_thread.joinable())
                 m_thread.join();
         }
@@ -51,7 +48,5 @@ namespace Carbon {
         for (size_t i = 0; i < num; ++i)
             m_threads[i].setSource(m_source);
     }
-    ThreadPool::~ThreadPool() {
-        m_threads.reset();
-    }
+
 }
