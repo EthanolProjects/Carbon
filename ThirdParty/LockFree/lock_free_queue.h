@@ -98,7 +98,7 @@ class ArrayLockFreeQueueMultipleProducers;
 template <
     typename ELEM_T, 
     uint32_t Q_SIZE = LOCK_FREE_Q_DEFAULT_SIZE, 
-    template <typename T, uint32_t S> class Q_TYPE = ArrayLockFreeQueueSingleProducer >
+    template <typename T, uint32_t S> class Q_TYPE = ArrayLockFreeQueueMultipleProducers >
 class ArrayLockFreeQueue
 {
 public:    
