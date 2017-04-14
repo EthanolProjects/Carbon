@@ -1,5 +1,5 @@
 #include "Concurrency.hpp"
-#include "../ThirdParty/LockFree/lock_free_queue.h"
+#include "../ThirdParty/LockFree/Queue.hpp"
 #include <algorithm>
 
 namespace Carbon {
