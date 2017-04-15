@@ -1,20 +1,48 @@
 #include "Concurrency.hpp"
 #include "../ThirdParty/LockFree/Queue.hpp"
-#include <algorithm>
+#include <queue>
 
 namespace Carbon {
     class ThreadPool::TaskQueue {
     public:
+        using Queue_t = ArrayLockFreeQueue<Task* , LOCK_FREE_Q_DEFAULT_SIZE>;
         void addTask(Task* task) {
-            mQueue.push(task);
+            while (true)
+                if (mBack->push(task))return;
+                else{
+                    std::lock_guard<std::mutex> lock(mMutex);
+                    if (mBack->full()){
+                        mQueue.push(std::make_unique<Queue_t>());
+                        mBack = mQueue.back().get();
+                    }
+                }
         }
         Task* getTask() {
             Task* ret = nullptr;
-            auto success = mQueue.pop(ret);
+            auto success = mFront->pop(ret);
+            if (!success && mFront!=mBack){
+                mMutex.lock();
+                if (mFront != mBack){
+                    auto queue = std::move(mQueue.front());
+                    mQueue.pop();
+                    mFront = mQueue.front().get();
+                    mMutex.unlock();
+                    Task* ret;
+                    while (queue->pop(ret))addTask(ret);
+                }
+                else mMutex.unlock();
+            }
             return success ? ret : nullptr;
         }
+        TaskQueue(){
+            mQueue.push(std::make_unique<Queue_t>());
+            mFront = mBack = mQueue.front().get();
+        }
     private:
-        ArrayLockFreeQueue<Task*, 350000> mQueue;
+        std::queue<std::unique_ptr<Queue_t>> mQueue;
+        Queue_t* mFront;
+        Queue_t* mBack;
+        std::mutex mMutex;
     };
 
     class ThreadPool::PoolThread {
@@ -52,19 +80,18 @@ namespace Carbon {
     ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
     ThreadPool::ThreadPool(size_t num) {
-        m_source = std::make_unique<TaskQueue>();
-        m_threads = std::make_unique<PoolThread[]>(num);
+        mSource=std::make_unique<TaskQueue>();
+        mThreads = std::make_unique<PoolThread[]>(num);
         for (size_t i = 0; i < num; ++i)
-            m_threads[i].setSource(m_source.get());
+            mThreads[i].setSource(mSource.get());
     }
 
     void ThreadPool::addTask(Task* task) {
-        m_source->addTask(task);
+        mSource->addTask(task);
     }
 
     ThreadPool::~ThreadPool() {
-        m_threads.reset();
-        m_source.reset();
+        mThreads.reset();
     }
 
 }

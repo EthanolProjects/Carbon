@@ -7,10 +7,13 @@ using namespace std::chrono;
 using namespace std::chrono_literals;
 using cclock = steady_clock;
 
-constexpr int testCount = 300000;
+constexpr int testCount = 100000;
 
 auto obj = []() {
-    return 1;
+    int c=0;
+    for (int i = 0; i < 1000; ++i)
+        c += rand();
+    return c;
 };
 
 int testAsync(std::launch pol) {

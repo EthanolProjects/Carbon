@@ -27,8 +27,8 @@ namespace Carbon {
     private:
         class TaskQueue;
         class PoolThread;
-        std::unique_ptr<PoolThread[]> m_threads;
-        std::unique_ptr<TaskQueue> m_source;
+        std::unique_ptr<PoolThread[]> mThreads;
+        std::unique_ptr<TaskQueue> mSource;
     };
 
     namespace TppDetail {
