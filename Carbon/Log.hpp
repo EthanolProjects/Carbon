@@ -6,15 +6,16 @@ namespace Carbon {
     class CARBON_API Logger{
     public:
         // Default Constructable
-        Logger() = default;
+        Logger();
         // Non-Copyable
         Logger(const Logger&) = delete;
         Logger& operator = (const Logger&) = delete;
         // Log Entry and Log Function
-        class Entry {
+        class CARBON_API Entry {
         public:
             Entry(const char* func, const char* file, std::int32_t line, std::int32_t sev, Logger& hst);
             ~Entry();
+            Entry(Entry&&) = default;
             template <class T>
             Entry& operator << (T&& rhs) { mStreamBuf << rhs; return *this; }
         private:
@@ -30,6 +31,7 @@ namespace Carbon {
         }
     private:
         void recordEntry(const char* func, const char* file, std::int32_t line, std::int32_t sev, std::stringstream& buffer);
+        virtual void flush(const std::stringstream& buffer)=0;
     };
-#define CARBON_LOG_SEV(logger, sev) logger(__FUNC__, __FILE__, __LINE__, sev)
+#define CARBON_LOG_SEV(logger, sev) logger(__func__  , __FILE__, __LINE__, sev)
 }

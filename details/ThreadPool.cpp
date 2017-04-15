@@ -5,7 +5,7 @@
 namespace Carbon {
     class ThreadPool::TaskQueue {
     public:
-        using Queue_t = ArrayLockFreeQueue<Task* , LOCK_FREE_Q_DEFAULT_SIZE>;
+        using Queue_t = ArrayLockFreeQueue<Task*>;
         void addTask(Task* task) {
             while (true)
                 if (mBack->push(task))return;

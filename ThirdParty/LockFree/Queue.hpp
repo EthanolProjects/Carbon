@@ -41,7 +41,7 @@
 #include <atomic>
 #include <cstdint>
 
-#define LOCK_FREE_Q_DEFAULT_SIZE 65536
+#define LOCK_FREE_Q_DEFAULT_SIZE 8192
 
 template <class ELEM_T, uint32_t Q_SIZE = LOCK_FREE_Q_DEFAULT_SIZE>
 class ArrayLockFreeQueue {
