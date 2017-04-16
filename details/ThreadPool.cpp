@@ -3,15 +3,20 @@
 #include <queue>
 
 namespace Carbon {
+    bool Task::last() const noexcept {
+        return false;
+    }
+    std::function<void()> Task::cut() noexcept { return {}; }
+
     class ThreadPool::TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Task*>;
         void addTask(Task* task) {
             while (true)
                 if (mBack->push(task))return;
-                else{
+                else {
                     std::lock_guard<std::mutex> lock(mMutex);
-                    if (mBack->full()){
+                    if (mBack->full()) {
                         mQueue.push(std::make_unique<Queue_t>());
                         mBack = mQueue.back().get();
                     }
@@ -20,9 +25,9 @@ namespace Carbon {
         Task* getTask() {
             Task* ret = nullptr;
             auto success = mFront->pop(ret);
-            if (!success && mFront!=mBack){
+            if (!success && mFront != mBack) {
                 mMutex.lock();
-                if (mFront != mBack){
+                if (mQueue.size()>1) {
                     auto queue = std::move(mQueue.front());
                     mQueue.pop();
                     mFront = mQueue.front().get();
@@ -34,7 +39,7 @@ namespace Carbon {
             }
             return success ? ret : nullptr;
         }
-        TaskQueue(){
+        TaskQueue() {
             mQueue.push(std::make_unique<Queue_t>());
             mFront = mBack = mQueue.front().get();
         }
@@ -49,10 +54,10 @@ namespace Carbon {
     public:
         ~PoolThread();
         void setSource(TaskQueue* source) {
-        m_source = source;
-        m_flag = true;
-        m_thread = std::thread([this]() { runThread(); });
-    }
+            m_source = source;
+            m_flag = true;
+            m_thread = std::thread([this] () { runThread(); });
+        }
     private:
         void runThread();
         bool m_flag;
@@ -66,21 +71,31 @@ namespace Carbon {
             while (m_flag && m_source && !(task = m_source->getTask()))
                 std::this_thread::yield();
             if (!m_flag)break;
-            task->run();
-            delete task;
+            if (task->isSingle) {
+                task->run();
+                delete task;
+            }
+            else {
+                auto run = task->cut();
+                if (task->last())
+                    m_source->addTask(task);
+                else delete task;
+                run();
+            }
         }
     }
 
     ThreadPool::PoolThread::~PoolThread() {
         m_flag = false;
+
         if (m_thread.joinable())
             m_thread.join();
     }
 
     ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
-    ThreadPool::ThreadPool(size_t num) {
-        mSource=std::make_unique<TaskQueue>();
+    ThreadPool::ThreadPool(size_t num):mSize(num) {
+        mSource = std::make_unique<TaskQueue>();
         mThreads = std::make_unique<PoolThread[]>(num);
         for (size_t i = 0; i < num; ++i)
             mThreads[i].setSource(mSource.get());
@@ -90,8 +105,33 @@ namespace Carbon {
         mSource->addTask(task);
     }
 
+    size_t ThreadPool::size() const {
+        return mSize;
+    }
+
     ThreadPool::~ThreadPool() {
         mThreads.reset();
+    }
+
+    TaskGroupFuture::TaskGroupFuture(size_t size) :mLast(size) {}
+    TaskGroupFuture::~TaskGroupFuture(){
+        wait();
+    }
+    void TaskGroupFuture::setException(std::exception_ptr exc,size_t size) {
+        mExceptions.emplace_back(exc);
+        mLast-=size;
+    }
+
+    void TaskGroupFuture::finish(size_t size) {
+        mLast-=size;
+    }
+
+    void TaskGroupFuture::wait() const {
+        while (mLast)std::this_thread::yield();
+    }
+
+    const std::vector<std::exception_ptr>& TaskGroupFuture::getExceptions() const {
+        return mExceptions;
     }
 
 }
