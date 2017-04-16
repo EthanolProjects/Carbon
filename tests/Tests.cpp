@@ -13,8 +13,12 @@ size_t testCount = 1;
 
 class MyLogger :public Carbon::Logger {
 private:
-    void flush(const std::stringstream& buffer) override {
-        std::cerr << buffer.rdbuf();
+    std::string format(const char* func , const char* file , std::int32_t line , std::int32_t sev , 
+        const std::string& str) const override {
+        return "Logger :"+str;
+    }
+    void flush(const std::string& buffer) override {
+        std::cout << buffer<<std::endl;
     }
 } logger;
 auto obj = [] () {
@@ -56,30 +60,15 @@ auto testThreadPool() {
     return (cclock::now() - start) / 1us;
 }
 
-struct Range {
-    size_t begin , end;
-    Range cut(size_t atomic) {
-        auto lb = begin;
-        begin += atomic;
-        if (begin > end)begin = end;
-        return { lb,begin };
-    }
-    size_t size() const {
-        return end - begin;
-    }
-};
-
 auto testThreadPoolTaskGroup() {
 
     Carbon::ThreadPool pool {};
     std::vector<int> result(testCount);
     auto start = cclock::now();
-    std::function<void(Range)> func = [&] (Range range) {
-        for (size_t i = range.begin; i < range.end; ++i) {
-            result[i] = obj();
-        }
-    };
-    auto future = Carbon::AsyncGroup(pool , func , Range { 0,testCount });
+    using Range = Carbon::TaskGroupHelper::IntegerRange;
+    std::function<void(Range)> func = Range::forEach([&] (size_t i) {result[i] = obj(); });
+    auto future = Carbon::AsyncGroup(pool , func ,
+        Carbon::TaskGroupHelper::IntegerRange { 0,testCount });
     future->wait();
     return (cclock::now() - start) / 1us;
 }

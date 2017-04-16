@@ -133,5 +133,22 @@ namespace Carbon {
     const std::vector<std::exception_ptr>& TaskGroupFuture::getExceptions() const {
         return mExceptions;
     }
-
+    namespace TaskGroupHelper {
+        IntegerRange::IntegerRange(size_t begin , size_t end) :mBegin(begin) , mEnd(end) {}
+        IntegerRange IntegerRange::cut(size_t atomic) {
+            auto lb = mBegin;
+            mBegin += atomic;
+            if (mBegin > mEnd)mBegin = mEnd;
+            return { lb,mBegin };
+        }
+        size_t IntegerRange::size() const {
+            return mEnd > mBegin ? mEnd - mBegin : 0;
+        }
+        std::function<void(IntegerRange)> IntegerRange::forEach
+        (const std::function<void(size_t)>& callable) {
+            return [=] (IntegerRange range) {
+                while (range.mBegin < range.mEnd) { callable(range.mBegin); ++range.mBegin; }
+            };
+        }
+    }
 }

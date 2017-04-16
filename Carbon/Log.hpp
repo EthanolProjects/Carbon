@@ -31,7 +31,8 @@ namespace Carbon {
         }
     private:
         void recordEntry(const char* func, const char* file, std::int32_t line, std::int32_t sev, std::stringstream& buffer);
-        virtual void flush(const std::stringstream& buffer)=0;
+        virtual std::string format(const char* func , const char* file , std::int32_t line , std::int32_t sev , const std::string& str) const= 0;
+        virtual void flush(const std::string& str)=0;
     };
 #define CARBON_LOG_SEV(logger, sev) logger(__func__  , __FILE__, __LINE__, sev)
 }

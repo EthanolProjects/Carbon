@@ -105,6 +105,18 @@ namespace Carbon {
 
     }
 
+    namespace TaskGroupHelper{
+        class CARBON_API IntegerRange final {
+        private:
+            size_t mBegin , mEnd;
+        public:
+            IntegerRange(size_t begin , size_t end);
+            IntegerRange cut(size_t atomic);
+            size_t size() const;
+            static std::function<void(IntegerRange)> forEach(const std::function<void(size_t)>& callable);
+        };
+    }
+
     template<class Callable , class ...Ts>
     inline auto Async(ThreadPool& pool , Callable callable , Ts&&... args) {
         auto newTask = new TppDetail::TaskFunc<Callable , Ts...>(
