@@ -52,45 +52,47 @@ namespace Carbon {
 
     class ThreadPool::PoolThread {
     public:
-        ~PoolThread();
+        ~PoolThread() {
+            mFlag = false;
+
+            if (mThread.joinable())
+                mThread.join();
+        }
         void setSource(TaskQueue* source) {
-            m_source = source;
-            m_flag = true;
-            m_thread = std::thread([this] () { runThread(); });
+            mSource = source;
+            mFlag = true;
+            mThread = std::thread([this] () { runThread(); });
         }
     private:
-        void runThread();
-        bool m_flag;
-        TaskQueue* m_source;
-        std::thread m_thread;
-    };
-
-    void ThreadPool::PoolThread::runThread() {
-        Task* task = nullptr;
-        while (m_flag) {
-            while (m_flag && m_source && !(task = m_source->getTask()))
-                std::this_thread::yield();
-            if (!m_flag)break;
-            if (task->isSingle) {
-                task->run();
-                delete task;
-            }
-            else {
-                auto run = task->cut();
-                if (task->last())
-                    m_source->addTask(task);
-                else delete task;
-                run();
+        static constexpr size_t maxSleep = 1000;
+        void runThread() {
+            Task* task = nullptr;
+            std::function<void()> run;
+            size_t sleep=1;
+            while (mFlag) {
+                while (mFlag && mSource && !(task = mSource->getTask())) {
+                    if (++sleep > maxSleep)sleep = maxSleep;
+                    std::this_thread::sleep_for(std::chrono::microseconds(sleep));
+                }
+                sleep = 1;
+                if (!mFlag)break;
+                if (task->isSingle) {
+                    task->run();
+                    delete task;
+                }
+                else {
+                    run = task->cut();
+                    if (task->last())
+                        mSource->addTask(task);
+                    else delete task;
+                    run();
+                }
             }
         }
-    }
-
-    ThreadPool::PoolThread::~PoolThread() {
-        m_flag = false;
-
-        if (m_thread.joinable())
-            m_thread.join();
-    }
+        bool mFlag;
+        TaskQueue* mSource;
+        std::thread mThread;
+    };
 
     ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
