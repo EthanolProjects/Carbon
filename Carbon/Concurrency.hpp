@@ -16,9 +16,7 @@ namespace Carbon {
         Task& operator = (const Task&) = delete;
         virtual ~Task() = default;
         virtual void run() noexcept = 0;
-        virtual bool last() const noexcept;
-        virtual std::function<void()> cut() noexcept;
-        bool isSingle;
+        virtual bool last() const noexcept = 0;
     };
 
     class CARBON_API ThreadPool final {
@@ -30,10 +28,10 @@ namespace Carbon {
         size_t size() const;
     private:
         class TaskQueue;
-        class PoolThread;
-        std::unique_ptr<PoolThread[]> mThreads;
+        class ThreadGroup;
         size_t mSize;
         std::unique_ptr<TaskQueue> mSource;
+        std::unique_ptr<ThreadGroup> mThreads;
     };
 
     class CARBON_API TaskGroupFuture;
@@ -48,7 +46,9 @@ namespace Carbon {
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
             TaskFunc(Callable call , Ts&&... args) :
                 mCallable(std::forward<Callable>(call)) , mTuple(std::forward_as_tuple(args...)){
-                isSingle = true;
+            }
+            bool last() const noexcept override {
+                return true;
             }
             void run() noexcept override {
                 try {
@@ -71,36 +71,30 @@ namespace Carbon {
         template<typename Range>
         class SubTask final : public Task {
         public:
-            SubTask(const std::function<void(Range)>& call , Range range ,
-                TaskGroupFuture& future , size_t atomic)
-                :mCallable(call) , mRange(range) , mFuture(future) , mAtomic(atomic) {
-                isSingle = false;
+            SubTask(const std::function<void(Range)>& call, Range range,
+                TaskGroupFuture& future, size_t atomic)
+                :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic) {
             }
-            void run() noexcept override {}
             bool last() const noexcept override {
                 return mRange.size();
             }
-            std::function<void()> cut() noexcept override {
-                auto range = mRange.cut(mAtomic);
-                auto callable = mCallable;
-                auto future = &mFuture;
-                return [=] {
+            void run() noexcept override {
+                try {
+                    mCallable(mRange);
+                    mFuture.finish(mRange.size());
+                }
+                catch (...) {
                     try {
-                        callable(range);
-                        future->finish(range.size());
+                        mFuture.setException(std::current_exception(), mRange.size());
                     }
-                    catch (...) {
-                        try {
-                            future->setException(std::current_exception() , range.size());
-                        }
-                        catch (...) {}
-                    }};
+                    catch (...) {}
+                }
             }
         private:
-            std::function<void(Range)> mCallable;
             Range mRange;
-            TaskGroupFuture& mFuture;
             size_t mAtomic;
+            TaskGroupFuture& mFuture;
+            std::function<void(Range)> mCallable;
         };
 
     }
@@ -125,7 +119,6 @@ namespace Carbon {
         pool.addTask(newTask);
         return fut;
     }
-
 
     class CARBON_API TaskGroupFuture final {
     public:

@@ -1,19 +1,17 @@
 #include "Concurrency.hpp"
 #include "../ThirdParty/LockFree/Queue.hpp"
 #include <queue>
+#include <mutex>
+#include <iostream>
+#include <condition_variable>
 
 namespace Carbon {
-    bool Task::last() const noexcept {
-        return false;
-    }
-    std::function<void()> Task::cut() noexcept { return {}; }
-
     class ThreadPool::TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Task*>;
         void addTask(Task* task) {
             while (true)
-                if (mBack->push(task))return;
+                if (mBack->push(task)) return;
                 else {
                     std::lock_guard<std::mutex> lock(mMutex);
                     if (mBack->full()) {
@@ -50,57 +48,50 @@ namespace Carbon {
         std::mutex mMutex;
     };
 
-    class ThreadPool::PoolThread {
+    class ThreadPool::ThreadGroup {
     public:
-        ~PoolThread() {
-            mFlag = false;
-
-            if (mThread.joinable())
-                mThread.join();
-        }
-        void setSource(TaskQueue* source) {
-            mSource = source;
+        ThreadGroup(TaskQueue* source, size_t count){
             mFlag = true;
-            mThread = std::thread([this] () { runThread(); });
+            for (size_t i = 0; i < count; ++i)
+                mThreads.emplace_back([this, source]() { runThread(source); });
+        }
+        ~ThreadGroup() {
+            mFlag = false;
+            for (auto&& thread : mThreads)
+                if (thread.joinable())
+                    thread.join();
         }
     private:
         static constexpr size_t maxSleep = 1000;
-        void runThread() {
+        void runThread(TaskQueue* source) {
             Task* task = nullptr;
-            std::function<void()> run;
-            size_t sleep=1;
+            size_t sleep = 1;
             while (mFlag) {
-                while (mFlag && mSource && !(task = mSource->getTask())) {
+                while (mFlag && !(task = source->getTask())) {
                     if (++sleep > maxSleep)sleep = maxSleep;
                     std::this_thread::sleep_for(std::chrono::microseconds(sleep));
                 }
+                if (!mFlag) break;
                 sleep = 1;
-                if (!mFlag)break;
-                if (task->isSingle) {
+                if (!task->last()) {
+                    source->addTask(task);
+                    task->run();
+                }
+                else {
                     task->run();
                     delete task;
                 }
-                else {
-                    run = task->cut();
-                    if (task->last())
-                        mSource->addTask(task);
-                    else delete task;
-                    run();
-                }
             }
         }
-        bool mFlag;
-        TaskQueue* mSource;
-        std::thread mThread;
+        std::atomic_bool mFlag;
+        std::vector<std::thread> mThreads;
     };
 
     ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
     ThreadPool::ThreadPool(size_t num):mSize(num) {
         mSource = std::make_unique<TaskQueue>();
-        mThreads = std::make_unique<PoolThread[]>(num);
-        for (size_t i = 0; i < num; ++i)
-            mThreads[i].setSource(mSource.get());
+        mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
     }
 
     void ThreadPool::addTask(Task* task) {

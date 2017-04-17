@@ -74,17 +74,7 @@ auto testThreadPoolTaskGroup() {
     return (cclock::now() - start) / 1us;
 }
 
-
-void sleepTest() {
-    Carbon::ThreadPool pool {};
-    std::this_thread::sleep_for(1s);
-}
-
 int main() {
-    CARBON_LOG_SEV(logger , 0) << "Hello Logger!";
-
-    sleepTest();
-
     while (testCount<=maxTestCount) {
         std::cout << "Async Benchmark for Small Tasks:" << testCount << "ops" << std::endl;
         float t0;
