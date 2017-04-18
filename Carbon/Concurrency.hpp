@@ -60,6 +60,7 @@ namespace Carbon {
                     }
                     catch (...) {}
                 }
+                delete this; // Suiside
             }
             auto getFuture() { return mPromise.get_future(); }
         private:
@@ -76,19 +77,22 @@ namespace Carbon {
                 :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic) {
             }
             bool last() const noexcept override {
-                return mRange.size();
+                return mRange.size() == 1;
             }
             void run() noexcept override {
+                auto range = mRange.cut(mAtomic);
                 try {
-                    mCallable(mRange);
-                    mFuture.finish(mRange.size());
+                    mCallable(range);
+                    mFuture.finish(range.size());
                 }
                 catch (...) {
                     try {
-                        mFuture.setException(std::current_exception(), mRange.size());
+                        mFuture.setException(std::current_exception(), range.size());
                     }
                     catch (...) {}
                 }
+                //if (mFuture.mLast == 0)
+                //    delete this;
             }
         private:
             Range mRange;

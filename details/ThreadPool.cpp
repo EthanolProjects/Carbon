@@ -73,14 +73,9 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (!task->last()) {
+                if (!task->last())
                     source->addTask(task);
-                    task->run();
-                }
-                else {
-                    task->run();
-                    delete task;
-                }
+                task->run();
             }
         }
         std::atomic_bool mFlag;
