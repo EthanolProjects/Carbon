@@ -31,7 +31,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\details\Dll.cpp" />
     <ClCompile Include="..\..\details\LogEntry.cpp" />
-    <ClCompile Include="..\..\details\LogPool.cpp" />
     <ClCompile Include="..\..\details\Math.cpp" />
     <ClCompile Include="..\..\details\ThreadPool.cpp" />
   </ItemGroup>
