@@ -8,7 +8,7 @@ namespace Carbon {
     class DynamicLibrary::DyImpl {
     public:
         DyImpl(const char* path) {
-            mLibrary = LoadLibrary(TEXT(path));
+            mLibrary = LoadLibraryA(path);
             if (mLibrary == nullptr){
                 throw std::runtime_error("Library Not Found!");
             }
