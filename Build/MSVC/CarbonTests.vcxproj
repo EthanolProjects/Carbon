@@ -119,6 +119,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions);UNITTESTINC="../Build/MSVC/UnitTestMSVC.h"</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,6 +134,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions);UNITTESTINC="../Build/MSVC/UnitTestMSVC.h"</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,6 +147,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions);UNITTESTINC="../Build/MSVC/UnitTestMSVC.h"</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -159,6 +162,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions);UNITTESTINC="../Build/MSVC/UnitTestMSVC.h"</PreprocessorDefinitions>
       <UseFullPaths>true</UseFullPaths>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
