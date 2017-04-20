@@ -55,7 +55,6 @@ namespace CarbonTests {
 		TEST_METHOD(BaseLine06) { baseLine(100000); }
 		TEST_METHOD(BaseLine07) { baseLine(1000000); }
 		TEST_METHOD(BaseLine08) { baseLine(10000000); }
-		TEST_METHOD(BaseLine09) { baseLine(100000000); }
 		TEST_METHOD(ThreadPool01) { testThreadPool(1); }
 		TEST_METHOD(ThreadPool02) { testThreadPool(10); }
 		TEST_METHOD(ThreadPool03) { testThreadPool(100); }
@@ -70,7 +69,6 @@ namespace CarbonTests {
 		TEST_METHOD(ThreadPoolTaskGroup06) { testThreadPoolTaskGroup(100000); }
 		TEST_METHOD(ThreadPoolTaskGroup07) { testThreadPoolTaskGroup(1000000); }
 		TEST_METHOD(ThreadPoolTaskGroup08) { testThreadPoolTaskGroup(10000000); }
-		TEST_METHOD(ThreadPoolTaskGroup09) { testThreadPoolTaskGroup(100000000); }
         END_TEST_GROUP
     }
 }
