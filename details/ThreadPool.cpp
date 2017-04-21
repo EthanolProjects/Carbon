@@ -1,5 +1,5 @@
 #include "Concurrency.hpp"
-#include "../ThirdParty/LockFree/Queue.hpp"
+#include "ThirdParty/LockFree/Queue.hpp"
 #include <queue>
 #include <mutex>
 #include <iostream>

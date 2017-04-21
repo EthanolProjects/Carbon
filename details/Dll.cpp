@@ -18,7 +18,7 @@ namespace Carbon {
                 FreeLibrary(mLibrary);
         }
         void* getFunction(const char* name) {
-            return GetProcAddress(mLibrary, name);
+            return reinterpret_cast<void*>(GetProcAddress(mLibrary, name));
         }
     private:
         HINSTANCE mLibrary;
@@ -75,7 +75,7 @@ namespace Carbon {
             pathFull += ".so";
 #elif defined CARBON_TARGET_APPLE
             pathFull += ".dylib";
-#endif 
+#endif
         }
         try {
             mImpl = new DyImpl(pathFull.c_str());

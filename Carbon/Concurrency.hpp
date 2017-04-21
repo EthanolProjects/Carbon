@@ -34,7 +34,37 @@ namespace Carbon {
         std::unique_ptr<ThreadGroup> mThreads;
     };
 
-    class CARBON_API TaskGroupFuture;
+    namespace TppDetail {
+        template<typename T> class SubTask;
+    }
+
+    class CARBON_API TaskGroupFuture final {
+    public:
+        TaskGroupFuture(size_t size);
+        ~TaskGroupFuture();
+        void wait() const;
+        template<class Clock , class Duration>
+        bool wait_until(const std::chrono::time_point<Clock , Duration>& time) const {
+            while (mLast) {
+                std::this_thread::yield();
+                if (std::chrono::system_clock::now() >= time)
+                    return false;
+            }
+            return true;
+        }
+        template<class Rep , class Period>
+        bool wait_for(const std::chrono::duration<Rep , Period>& time) const {
+            return wait_until(std::chrono::system_clock::now() + time);
+        }
+        const std::vector<std::exception_ptr>& getExceptions() const;
+    private:
+        template<typename T>
+        friend class TppDetail::SubTask;
+        void finish(size_t size);
+        void setException(std::exception_ptr exc , size_t size);
+        std::atomic_size_t mLast;
+        std::vector<std::exception_ptr> mExceptions;
+    };
     class CARBON_API Range;
 
     namespace TppDetail {
@@ -123,34 +153,6 @@ namespace Carbon {
         pool.addTask(newTask);
         return fut;
     }
-
-    class CARBON_API TaskGroupFuture final {
-    public:
-        TaskGroupFuture(size_t size);
-        ~TaskGroupFuture();
-        void wait() const;
-        template<class Clock , class Duration>
-        bool wait_until(const std::chrono::time_point<Clock , Duration>& time) const {
-            while (mLast) {
-                std::this_thread::yield();
-                if (std::chrono::system_clock::now() >= time)
-                    return false;
-            }
-            return true;
-        }
-        template<class Rep , class Period>
-        bool wait_for(const std::chrono::duration<Rep , Period>& time) const {
-            return wait_until(std::chrono::system_clock::now() + time);
-        }
-        const std::vector<std::exception_ptr>& getExceptions() const;
-    private:
-        template<typename T>
-        friend class TppDetail::SubTask;
-        void finish(size_t size);
-        void setException(std::exception_ptr exc , size_t size);
-        std::atomic_size_t mLast;
-        std::vector<std::exception_ptr> mExceptions;
-    };
 
     template<typename Range>
     inline auto AsyncGroup(ThreadPool& pool ,
