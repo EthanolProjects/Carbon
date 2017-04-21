@@ -15,11 +15,21 @@ IF(UNIX)
     link_libraries(dl pthread)
 ENDIF()
 
+# Build Library
 set(INC_CARBON_BASE Carbon)
 set(SRC_CARBON_BASE Details)
 include(Details/CMakeLists.txt)
 include_directories(${INC_CARBON_ALL})
 add_library(Carbon SHARED ${SRC_CARBON_ALL})
+
+# Build Tests
+FIND_PACKAGE(OpenMP REQUIRED)
+if(OPENMP_FOUND)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+endif()
+add_definitions(-DUNITTESTINC="../Build/UNIX/UnitTestUNIX.h")
 add_executable(CarbonTest Tests/Tests.cpp)
-target_link_libraries(CarbonTest Carbon)
+target_link_libraries(CarbonTest Carbon gtest)
 
