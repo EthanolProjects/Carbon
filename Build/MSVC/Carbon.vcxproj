@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -29,10 +29,10 @@
     <ClInclude Include="..\..\Carbon\Timer.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\details\Dll.cpp" />
-    <ClCompile Include="..\..\details\LogEntry.cpp" />
-    <ClCompile Include="..\..\details\Math.cpp" />
-    <ClCompile Include="..\..\details\ThreadPool.cpp" />
+    <ClCompile Include="..\..\Details\Dll.cpp" />
+    <ClCompile Include="..\..\Details\LogEntry.cpp" />
+    <ClCompile Include="..\..\Details\Math.cpp" />
+    <ClCompile Include="..\..\Details\ThreadPool.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
