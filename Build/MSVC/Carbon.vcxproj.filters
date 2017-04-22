@@ -1,53 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
+О╩©<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="т╢нд╪Ч">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="м╥нд╪Ч">
+    <Filter Include="Headers">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Config.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Dll.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Log.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Math.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Mpl.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Timer.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Carbon.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Concurrency.hpp">
-      <Filter>м╥нд╪Ч</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Details\Dll.cpp">
-      <Filter>т╢нд╪Ч</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Details\LogEntry.cpp">
-      <Filter>т╢нд╪Ч</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Details\Math.cpp">
-      <Filter>т╢нд╪Ч</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Details\ThreadPool.cpp">
-      <Filter>т╢нд╪Ч</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

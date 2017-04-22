@@ -25,7 +25,7 @@ namespace Carbon {
             auto success = mFront->pop(ret);
             if (!success && mFront != mBack) {
                 mMutex.lock();
-                if (mQueue.size()>1) {
+                if (mQueue.size() > 1) {
                     auto queue = std::move(mQueue.front());
                     mQueue.pop();
                     mFront = mQueue.front().get();
@@ -50,7 +50,7 @@ namespace Carbon {
 
     class ThreadPool::ThreadGroup {
     public:
-        ThreadGroup(TaskQueue* source, size_t count){
+        ThreadGroup(TaskQueue* source, size_t count) {
             mFlag = true;
             for (size_t i = 0; i < count; ++i)
                 mThreads.emplace_back([this, source]() { runThread(source); });
@@ -73,9 +73,9 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (!task->last())
+                if (task->reusable(task))
                     source->addTask(task);
-                task->run();
+                task->execute(task);
             }
         }
         std::atomic_bool mFlag;
@@ -84,7 +84,7 @@ namespace Carbon {
 
     ThreadPool::ThreadPool() : ThreadPool(std::thread::hardware_concurrency()) {}
 
-    ThreadPool::ThreadPool(size_t num):mSize(num) {
+    ThreadPool::ThreadPool(size_t num) : mSize(num) {
         mSource = std::make_unique<TaskQueue>();
         mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
     }
@@ -102,16 +102,16 @@ namespace Carbon {
     }
 
     TaskGroupFuture::TaskGroupFuture(size_t size) :mLast(size) {}
-    TaskGroupFuture::~TaskGroupFuture(){
+    TaskGroupFuture::~TaskGroupFuture() {
         wait();
     }
-    void TaskGroupFuture::setException(std::exception_ptr exc,size_t size) {
+    size_t TaskGroupFuture::setException(std::exception_ptr exc, size_t size) {
         mExceptions.emplace_back(exc);
-        mLast-=size;
+        return mLast -= size;
     }
 
-    void TaskGroupFuture::finish(size_t size) {
-        mLast-=size;
+    size_t TaskGroupFuture::finish(size_t size) {
+        return mLast -= size;
     }
 
     void TaskGroupFuture::wait() const {
@@ -122,7 +122,7 @@ namespace Carbon {
         return mExceptions;
     }
     namespace TaskGroupHelper {
-        IntegerRange::IntegerRange(size_t begin , size_t end) :mBegin(begin) , mEnd(end) {}
+        IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
         IntegerRange IntegerRange::cut(size_t atomic) {
             auto lb = mBegin;
             mBegin += atomic;
@@ -134,7 +134,7 @@ namespace Carbon {
         }
         std::function<void(IntegerRange)> IntegerRange::forEach
         (const std::function<void(size_t)>& callable) {
-            return [=] (IntegerRange range) {
+            return [=](IntegerRange range) {
                 while (range.mBegin < range.mEnd) { callable(range.mBegin); ++range.mBegin; }
             };
         }
