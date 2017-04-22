@@ -8,8 +8,8 @@
 
 namespace Carbon {
     struct Task {
-        using ExecFunction = void(*)(Task*);
-        using ReuseableFunction = bool(*)(Task*);
+        using ExecFunction = void(*)();
+        using ReuseableFunction = bool(*)(std::function<void()>&);
         ExecFunction execute;
         ReuseableFunction reusable;
     };
@@ -51,7 +51,7 @@ namespace Carbon {
         bool wait_for(const std::chrono::duration<Rep , Period>& time) const {
             return wait_until(std::chrono::system_clock::now() + time);
         }
-        const std::vector<std::exception_ptr>& getExceptions() const;
+        void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc);
     private:
         template<typename T>
         friend class TppDetail::SubTask;
@@ -59,8 +59,8 @@ namespace Carbon {
         size_t setException(std::exception_ptr exc , size_t size);
         std::atomic_size_t mLast;
         std::vector<std::exception_ptr> mExceptions;
+        std::mutex mMutex;
     };
-    class CARBON_API Range;
 
     namespace TppDetail {
         // TODO: FIXME -- Requires Better Implementation
@@ -68,22 +68,30 @@ namespace Carbon {
         struct TaskFunc : Task {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
+            template<typename T>
+            static void doAndSet(std::promise<T>& promise , Callable& callable , std::tuple<Ts...>& tuple) {
+                promise.set_value(Apply(callable , tuple));
+            }
+            template<>
+            static void doAndSet<void>(std::promise<void>& promise , Callable& callable , std::tuple<Ts...>& tuple) {
+                Apply(callable , tuple);
+                promise.set_value();
+            }
             TaskFunc(Callable call, Ts&&... args) :
                 callable(std::forward<Callable>(call)), tuple(std::forward_as_tuple(args...)) {
-                execute = [](Task* in) {
-                    auto pack = reinterpret_cast<TaskFunc*>(in);
+                execute = [this] {
                     try {
-                        pack->promise.set_value(Apply(pack->callable, pack->tuple));
+                        doAndSet<ReturnType>(promise , callable ,tuple);
                     }
                     catch (...) {
                         try {
-                            pack->promise.set_exception(std::current_exception());
+                            promise.set_exception(std::current_exception());
                         }
                         catch (...) {}
                     }
-                    delete pack;
+                    delete this;
                 };
-                reusable = [](Task*) { return false; };
+                reusable = [](std::function<void()>&) { return false; };
             }
             auto getFuture() { return promise.get_future(); }
             Callable callable;
@@ -96,24 +104,27 @@ namespace Carbon {
             SubTask(const std::function<void(Range)>& call, Range range,
                 TaskGroupFuture& future, size_t atomic)
                 :callable(call), range(range), future(future), atomic(atomic) {
-                execute = [](Task* in) {
-                    auto pack = reinterpret_cast<SubTask*>(in);
-                    auto tRange = pack->range.cut(pack->atomic);
-                    size_t lasts;
-                    try {
-                        pack->callable(tRange);
-                        lasts = pack->future.finish(tRange.size());
-                    }
-                    catch (...) {
-                        try {
-                            lasts = pack->future.setException(std::current_exception(), tRange.size());
-                        }
-                        catch (...) {}
-                    }
-                    if (!lasts)
-                        delete pack;
+                execute = [this] {
+                    delete this;
                 };
-                reusable = [](Task* in)->bool { return reinterpret_cast<SubTask*>(in)->range.size(); };
+                reusable = [this](std::function<void()>& func)->bool {
+                    if (range.size()) {
+                        func = [future=pack->future,call = pack->callable, task = pack->range.cut(pack->atomic)] {
+                            try {
+                                call(task);
+                                future.finish(task.size());
+                            }
+                            catch (...) {
+                                try {
+                                    future.setException(std::current_exception() , task.size());
+                                }
+                                catch (...) {}
+                            }
+                        }
+                        return true;
+                    }
+                    return false;
+                };
             }
             Range range;
             size_t atomic;

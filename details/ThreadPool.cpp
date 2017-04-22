@@ -65,6 +65,7 @@ namespace Carbon {
         static constexpr size_t maxSleep = 1000;
         void runThread(TaskQueue* source) {
             Task* task = nullptr;
+            std::function<void()> func;
             size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
@@ -73,9 +74,11 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (task->reusable(task))
+                if (task->reusable(func)) {
                     source->addTask(task);
-                task->execute(task);
+                    func();
+                }
+                else task->execute();
             }
         }
         std::atomic_bool mFlag;
@@ -106,6 +109,7 @@ namespace Carbon {
         wait();
     }
     size_t TaskGroupFuture::setException(std::exception_ptr exc, size_t size) {
+        std::lock_guard<std::mutex> lock(mMutex);
         mExceptions.emplace_back(exc);
         return mLast -= size;
     }
@@ -118,8 +122,12 @@ namespace Carbon {
         while (mLast)std::this_thread::yield();
     }
 
-    const std::vector<std::exception_ptr>& TaskGroupFuture::getExceptions() const {
-        return mExceptions;
+    void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc) {
+        std::lock_guard<std::mutex> lock(mMutex);
+        for (auto&& exc:mExceptions) {
+            catchFunc([&exc] {std::rethrow_exception(std::move(exc)); });
+        }
+        mExceptions.clear();
     }
     namespace TaskGroupHelper {
         IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
