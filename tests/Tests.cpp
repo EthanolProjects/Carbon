@@ -9,7 +9,7 @@ namespace CarbonTests {
 
         auto obj = [] () {
             int c = 0;
-            for (int i = 0; i < 100; ++i)
+            for (int i = 0; i < 1000; ++i)
                 c += rand();
             return c;
         };
@@ -47,7 +47,7 @@ namespace CarbonTests {
                 ++count;
                 result[i] = obj();
             });
-            auto future = Carbon::AsyncGroup(pool, func,{ 0,testCount });
+            auto future = Carbon::AsyncGroup(pool, func, { 0,testCount },1024);
             future->wait();
             useResult(result[getPos(testCount)]);
             ASSERT_EQ(testCount, static_cast<size_t>(count));
@@ -70,10 +70,10 @@ namespace CarbonTests {
         COR_TEST_NUM(name,6,100000)\
         COR_TEST_NUM(name,7,1000000)\
         COR_TEST_NUM(name,8,10000000)
-        COR_TEST(ThreadPool)
-        COR_TEST(ThreadPoolTaskGroup)
+        COR_TEST(ThreadPool);
+        COR_TEST(ThreadPoolTaskGroup);
 
-            static constexpr size_t maxNum = 100000;
+        static constexpr size_t maxNum = 1000000;
         TEST_METHOD(ThreadPoolExtremalTest) {
             using namespace std::literals;
             Carbon::ThreadPool A {}, B {};
@@ -91,8 +91,25 @@ namespace CarbonTests {
                 }
                 else Carbon::AsyncGroup(B, func1, range)->wait();
             };
-            Carbon::AsyncGroup(A, func2
-                , Range { 0,maxNum }, 128)->wait();
+            Carbon::AsyncGroup(A, func2, { 0,maxNum }, 128)->wait();
+            useResult(result[getPos(maxNum)]);
+        }
+
+        TEST_METHOD(PerfTestOMP) {
+            std::vector<int> result(maxNum);
+#          pragma omp parallel for
+            for (int i = 0; i < maxNum; ++i)
+                result[i] = obj();
+            useResult(result[getPos(maxNum)]);
+        }
+
+        TEST_METHOD(PerfTestCTP) {
+            std::vector<int> result(maxNum);
+            Carbon::ThreadPool pool {};
+            using Range = Carbon::TaskGroupHelper::IntegerRange;
+            std::function<void(Range)> func = Range::forEach([&] (size_t i) {result[i] = obj(); });
+            auto future = Carbon::AsyncGroup(pool, func, { 0,maxNum });
+            future->wait();
             useResult(result[getPos(maxNum)]);
         }
 

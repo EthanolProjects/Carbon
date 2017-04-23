@@ -9,7 +9,7 @@
 namespace Carbon {
     class CARBON_API Task {
     public:
-        virtual void execute()=0;
+        virtual void execute() = 0;
         virtual bool reusable();
     };
 
@@ -78,7 +78,7 @@ namespace Carbon {
             }
         public:
             TaskFunc(Callable call, Ts&&... args) :
-                mCallable(std::forward<Callable>(call)),mTuple(std::forward_as_tuple(args...)) {}
+                mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) {}
             void execute() override {
                 try {
                     doAndSet<ReturnType>(mPromise, mCallable, mTuple);
@@ -103,7 +103,7 @@ namespace Carbon {
         public:
             SubTask(const std::function<void(Range)>& call, Range range,
                 TaskGroupFuture& future, size_t atomic)
-                :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic),mLast(range.size()/atomic+static_cast<bool>(range.size()%atomic)) {}
+                :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic), mLast(range.size() / atomic + static_cast<bool>(range.size() % atomic)) {}
             bool reusable() override {
                 --mLast;
                 return mLast;
@@ -152,7 +152,7 @@ namespace Carbon {
         auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(
             callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
-        pool.addTask( newTask);
+        pool.addTask(newTask);
         return fut;
     }
 

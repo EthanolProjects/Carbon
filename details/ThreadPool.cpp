@@ -142,10 +142,9 @@ namespace Carbon {
     namespace TaskGroupHelper {
         IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
         IntegerRange::IntegerRange(const IntegerRange & rhs)
-            :mBegin(rhs.mBegin.load()),mEnd(rhs.mEnd)
-        {}
+            : mBegin(rhs.mBegin.load()), mEnd(rhs.mEnd) {}
         IntegerRange IntegerRange::cut(size_t atomic) {
-            size_t lb=mBegin.load();
+            size_t lb = mBegin.load();
             size_t end;
             do end = std::min(lb + atomic, mEnd);
             while (!mBegin.compare_exchange_weak(lb, end));
