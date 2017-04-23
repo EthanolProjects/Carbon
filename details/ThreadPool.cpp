@@ -7,7 +7,7 @@
 
 namespace Carbon {
     void Task::execute() {}
-    bool Task::reusable(std::function<void()>&,bool& reuse) {
+    bool Task::reusable(std::function<void()>&, bool& reuse) {
         return false;
     }
 
@@ -58,7 +58,7 @@ namespace Carbon {
         ThreadGroup(TaskQueue* source, size_t count) {
             mFlag = true;
             for (size_t i = 0; i < count; ++i)
-                mThreads.emplace_back([this, source]() { runThread(source); });
+                mThreads.emplace_back([this, source] () { runThread(source); });
         }
         ~ThreadGroup() {
             mFlag = false;
@@ -80,8 +80,8 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (task->reusable(func,reuse)) {
-                    if(reuse)source->addTask(task);
+                if (task->reusable(func, reuse)) {
+                    if (reuse)source->addTask(task);
                     func();
                 }
                 else task->execute();
@@ -125,15 +125,15 @@ namespace Carbon {
     }
 
     void TaskGroupFuture::wait() const {
-        size_t last = mLast,current;
+        size_t last = mLast, current;
         using clock = std::chrono::system_clock;
         auto time = clock::now();
-        while (mLast){
+        while (mLast) {
             current = mLast;
             if (last != current) {
                 auto now = clock::now();
                 auto wait = (now - time)*current / (last - current);
-                std::this_thread::sleep_for(wait/100);
+                std::this_thread::sleep_for(wait / 100);
                 time = now;
                 last = current;
             }
@@ -143,7 +143,7 @@ namespace Carbon {
 
     void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc) {
         std::lock_guard<std::mutex> lock(mMutex);
-        for (auto&& exc:mExceptions) {
+        for (auto&& exc : mExceptions) {
             catchFunc([&exc] {std::rethrow_exception(std::move(exc)); });
         }
         mExceptions.clear();
@@ -161,7 +161,7 @@ namespace Carbon {
         }
         std::function<void(IntegerRange)> IntegerRange::forEach
         (const std::function<void(size_t)>& callable) {
-            return [=](IntegerRange range) {
+            return [=] (IntegerRange range) {
                 while (range.mBegin < range.mEnd) { callable(range.mBegin); ++range.mBegin; }
             };
         }

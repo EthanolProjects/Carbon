@@ -29,13 +29,13 @@ namespace CarbonTests {
             std::vector<std::future<int>> futs; futs.reserve(testCount);
             std::atomic_size_t count { 0 };
             for (size_t i = 0; i < testCount; ++i)
-                futs.push_back(Carbon::Async(pool , [&] {
+                futs.push_back(Carbon::Async(pool, [&] {
                 ++count;
                 return obj(); }));
             for (auto&& a : futs)
                 a.wait();
             useResult(futs[getPos(testCount)].get());
-            ASSERT_EQ(testCount , static_cast<size_t>(count));
+            ASSERT_EQ(testCount, static_cast<size_t>(count));
         }
 
         void testThreadPoolTaskGroup(size_t testCount) {
@@ -47,11 +47,11 @@ namespace CarbonTests {
                 ++count;
                 result[i] = obj();
             });
-            auto future = Carbon::AsyncGroup(pool , func ,
+            auto future = Carbon::AsyncGroup(pool, func,
                 Range { 0,testCount });
             future->wait();
             useResult(result[getPos(testCount)]);
-            ASSERT_EQ(testCount , static_cast<size_t>(count));
+            ASSERT_EQ(testCount, static_cast<size_t>(count));
         }
 
 #define COR_TEST_NUM(name,id,num)\
@@ -72,12 +72,12 @@ namespace CarbonTests {
         COR_TEST_NUM(name,7,1000000)\
         COR_TEST_NUM(name,8,10000000)
         COR_TEST(ThreadPool)
-        COR_TEST(ThreadPoolTaskGroup)
+            COR_TEST(ThreadPoolTaskGroup)
 
-        static constexpr size_t maxNum = 100000;
+            static constexpr size_t maxNum = 100000;
         TEST_METHOD(ThreadPoolExtremalTest) {
             using namespace std::literals;
-            Carbon::ThreadPool A {} , B {};
+            Carbon::ThreadPool A {}, B {};
             using Range = Carbon::TaskGroupHelper::IntegerRange;
             std::vector<int> result(maxNum);
             std::function<void(Range)> func1 =
@@ -86,14 +86,14 @@ namespace CarbonTests {
                 if (rand() > RAND_MAX / 2) {
                     std::vector<std::future<void>> v; v.reserve(range.size());
                     Range::forEach([&] (size_t i) {
-                        v.push_back(Carbon::Async(B , [&,i] {result[i] = obj(); }));
+                        v.push_back(Carbon::Async(B, [&, i] {result[i] = obj(); }));
                     })(range);
                     for (auto&& x : v) x.wait();
                 }
-                else Carbon::AsyncGroup(B , func1 , range)->wait();
+                else Carbon::AsyncGroup(B, func1, range)->wait();
             };
-            Carbon::AsyncGroup(A , func2
-                , Range { 0,maxNum } , 128)->wait();
+            Carbon::AsyncGroup(A, func2
+                , Range { 0,maxNum }, 128)->wait();
             useResult(result[getPos(maxNum)]);
         }
 
