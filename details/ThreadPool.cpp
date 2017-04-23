@@ -1,13 +1,9 @@
 #include "Concurrency.hpp"
 #include "ThirdParty/LockFree/Queue.hpp"
 #include <queue>
-#include <mutex>
-#include <iostream>
-#include <condition_variable>
 
 namespace Carbon {
-    void Task::execute() {}
-    bool Task::reusable(std::function<void()>&, bool& reuse) {
+    bool Task::reusable() {
         return false;
     }
 
@@ -70,8 +66,6 @@ namespace Carbon {
         static constexpr size_t maxSleep = 1000;
         void runThread(TaskQueue* source) {
             Task* task = nullptr;
-            std::function<void()> func;
-            bool reuse;
             size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
@@ -80,11 +74,8 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (task->reusable(func, reuse)) {
-                    if (reuse)source->addTask(task);
-                    func();
-                }
-                else task->execute();
+                if (task->reusable())source->addTask(task);
+                task->execute();
             }
         }
         std::atomic_bool mFlag;
@@ -126,7 +117,7 @@ namespace Carbon {
 
     void TaskGroupFuture::wait() const {
         size_t last = mLast, current;
-        using clock = std::chrono::system_clock;
+        using clock = std::chrono::high_resolution_clock;
         auto time = clock::now();
         while (mLast) {
             current = mLast;
@@ -150,11 +141,15 @@ namespace Carbon {
     }
     namespace TaskGroupHelper {
         IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
+        IntegerRange::IntegerRange(const IntegerRange & rhs)
+            :mBegin(rhs.mBegin.load()),mEnd(rhs.mEnd)
+        {}
         IntegerRange IntegerRange::cut(size_t atomic) {
-            auto lb = mBegin;
-            mBegin += atomic;
-            if (mBegin > mEnd)mBegin = mEnd;
-            return { lb,mBegin };
+            size_t lb=mBegin.load();
+            size_t end;
+            do end = std::min(lb + atomic, mEnd);
+            while (!mBegin.compare_exchange_weak(lb, end));
+            return { lb,end };
         }
         size_t IntegerRange::size() const {
             return mEnd > mBegin ? mEnd - mBegin : 0;
@@ -162,7 +157,8 @@ namespace Carbon {
         std::function<void(IntegerRange)> IntegerRange::forEach
         (const std::function<void(size_t)>& callable) {
             return [=] (IntegerRange range) {
-                while (range.mBegin < range.mEnd) { callable(range.mBegin); ++range.mBegin; }
+                size_t begin = range.mBegin.load();
+                while (begin < range.mEnd) { callable(begin); ++begin; }
             };
         }
     }

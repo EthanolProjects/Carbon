@@ -7,9 +7,10 @@
 #include <future>
 
 namespace Carbon {
-    struct CARBON_API Task {
-        virtual void execute();
-        virtual bool reusable(std::function<void()>&, bool&);
+    class CARBON_API Task {
+    public:
+        virtual void execute()=0;
+        virtual bool reusable();
     };
 
     class CARBON_API ThreadPool final {
@@ -28,7 +29,7 @@ namespace Carbon {
     };
 
     namespace TppDetail {
-        template<typename T> struct SubTask;
+        template<typename T> class SubTask;
     }
 
     class CARBON_API TaskGroupFuture final {
@@ -63,7 +64,7 @@ namespace Carbon {
     namespace TppDetail {
         // TODO: FIXME -- Requires Better Implementation
         template <class Callable, class ...Ts>
-        struct TaskFunc : Task {
+        class TaskFunc :public Task {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
             template<typename T>
@@ -75,54 +76,59 @@ namespace Carbon {
                 Apply(callable, tuple);
                 promise.set_value();
             }
+        public:
             TaskFunc(Callable call, Ts&&... args) :
-                callable(std::forward<Callable>(call)), tuple(std::forward_as_tuple(args...)) {}
+                mCallable(std::forward<Callable>(call)),mTuple(std::forward_as_tuple(args...)) {}
             void execute() override {
                 try {
-                    doAndSet<ReturnType>(promise, callable, tuple);
+                    doAndSet<ReturnType>(mPromise, mCallable, mTuple);
                 }
                 catch (...) {
                     try {
-                        promise.set_exception(std::current_exception());
+                        mPromise.set_exception(std::current_exception());
                     }
                     catch (...) {}
                 }
                 delete this;
             }
-            auto getFuture() { return promise.get_future(); }
-            Callable callable;
-            std::tuple<Ts...> tuple;
-            std::promise<ReturnType> promise;
+            auto getFuture() { return mPromise.get_future(); }
+        private:
+            Callable mCallable;
+            std::tuple<Ts...> mTuple;
+            std::promise<ReturnType> mPromise;
         };
 
         template<typename Range>
-        struct SubTask : Task {
+        class SubTask :public Task {
+        public:
             SubTask(const std::function<void(Range)>& call, Range range,
                 TaskGroupFuture& future, size_t atomic)
-                :callable(call), range(range), future(future), atomic(atomic) {}
-            bool reusable(std::function<void()>& func, bool& reuse)override {
-                Range task = range.cut(atomic);
-                func = [this, task] {
-                    size_t last;
-                    try {
-                        callable(task);
-                        last = future.finish(task.size());
-                    }
-                    catch (...) {
-                        try {
-                            last = future.setException(std::current_exception(), task.size());
-                        }
-                        catch (...) {}
-                    }
-                    if (!last)delete this;
-                };
-                reuse = static_cast<bool>(range.size());
-                return true;
+                :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic),mLast(range.size()/atomic+static_cast<bool>(range.size()%atomic)) {}
+            bool reusable() override {
+                --mLast;
+                return mLast;
             }
-            Range range;
-            size_t atomic;
-            TaskGroupFuture& future;
-            std::function<void(Range)> callable;
+            void execute() override {
+                size_t last;
+                auto task = mRange.cut(mAtomic);
+                try {
+                    mCallable(task);
+                    last = mFuture.finish(task.size());
+                }
+                catch (...) {
+                    try {
+                        last = mFuture.setException(std::current_exception(), task.size());
+                    }
+                    catch (...) {}
+                }
+                if (!last)delete this;
+            }
+        private:
+            Range mRange;
+            size_t mAtomic;
+            size_t mLast;
+            TaskGroupFuture& mFuture;
+            std::function<void(Range)> mCallable;
         };
 
     }
@@ -130,9 +136,11 @@ namespace Carbon {
     namespace TaskGroupHelper {
         class CARBON_API IntegerRange final {
         private:
-            size_t mBegin, mEnd;
+            std::atomic_size_t mBegin;
+            const size_t mEnd;
         public:
             IntegerRange(size_t begin, size_t end);
+            IntegerRange(const IntegerRange& rhs);
             IntegerRange cut(size_t atomic);
             size_t size() const;
             static std::function<void(IntegerRange)> forEach(const std::function<void(size_t)>& callable);
@@ -144,7 +152,7 @@ namespace Carbon {
         auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(
             callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
-        pool.addTask(newTask);
+        pool.addTask( newTask);
         return fut;
     }
 

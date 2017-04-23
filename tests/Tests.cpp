@@ -47,8 +47,7 @@ namespace CarbonTests {
                 ++count;
                 result[i] = obj();
             });
-            auto future = Carbon::AsyncGroup(pool, func,
-                Range { 0,testCount });
+            auto future = Carbon::AsyncGroup(pool, func,{ 0,testCount });
             future->wait();
             useResult(result[getPos(testCount)]);
             ASSERT_EQ(testCount, static_cast<size_t>(count));
@@ -72,7 +71,7 @@ namespace CarbonTests {
         COR_TEST_NUM(name,7,1000000)\
         COR_TEST_NUM(name,8,10000000)
         COR_TEST(ThreadPool)
-            COR_TEST(ThreadPoolTaskGroup)
+        COR_TEST(ThreadPoolTaskGroup)
 
             static constexpr size_t maxNum = 100000;
         TEST_METHOD(ThreadPoolExtremalTest) {
