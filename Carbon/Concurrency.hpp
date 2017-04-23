@@ -29,7 +29,7 @@ namespace Carbon {
     };
 
     namespace TppDetail {
-        template<typename T> class SubTask;
+        template<typename T, typename T2> class SubTask;
     }
 
     class CARBON_API TaskGroupFuture final {
@@ -52,7 +52,7 @@ namespace Carbon {
         }
         void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc);
     private:
-        template<typename T>
+        template<typename T, typename T2>
         friend class TppDetail::SubTask;
         size_t finish(size_t size);
         size_t setException(std::exception_ptr exc, size_t size);
@@ -62,7 +62,6 @@ namespace Carbon {
     };
 
     namespace TppDetail {
-        // TODO: FIXME -- Requires Better Implementation
         template <class Callable, class ...Ts>
         class TaskFunc :public Task {
             using ReturnType =
@@ -98,11 +97,10 @@ namespace Carbon {
             std::promise<ReturnType> mPromise;
         };
 
-        template<typename Range>
+        template<typename Range, typename Callable>
         class SubTask :public Task {
         public:
-            SubTask(const std::function<void(Range)>& call, Range range,
-                TaskGroupFuture& future, size_t atomic)
+            SubTask(const Callable& call, Range range, TaskGroupFuture& future, size_t atomic)
                 :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic), mLast(range.size() / atomic + static_cast<bool>(range.size() % atomic)) {}
             bool reusable() override {
                 --mLast;
@@ -128,7 +126,7 @@ namespace Carbon {
             size_t mAtomic;
             size_t mLast;
             TaskGroupFuture& mFuture;
-            std::function<void(Range)> mCallable;
+            Callable mCallable;
         };
 
     }
@@ -143,26 +141,28 @@ namespace Carbon {
             IntegerRange(const IntegerRange& rhs);
             IntegerRange cut(size_t atomic);
             size_t size() const;
-            static std::function<void(IntegerRange)> forEach(const std::function<void(size_t)>& callable);
+            static auto forEach(const std::function<void(size_t)>& callable) {
+                return [=](IntegerRange range) {
+                    size_t begin = range.mBegin.load();
+                    while (begin < range.mEnd) { callable(begin); ++begin; }
+                };
+            }
         };
     }
 
     template<class Callable, class ...Ts>
-    inline auto Async(ThreadPool& pool, Callable callable, Ts&&... args) {
-        auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(
-            callable, std::forward<Ts>(args)...);
+    inline auto Async(ThreadPool& pool, const Callable& callable, Ts&&... args) {
+        auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
         pool.addTask(newTask);
         return fut;
     }
 
-    template<typename Range>
-    inline auto AsyncGroup(ThreadPool& pool,
-        const std::function<void(Range)>& closure, Range range,
-        size_t atomic = 0) {
+    template<typename Range, typename Callable>
+    inline auto AsyncGroup(ThreadPool& pool, Range range, const Callable& closure, size_t atomic = 0) {
         auto fut = std::make_unique<TaskGroupFuture>(range.size());
         if (atomic == 0)atomic = range.size() / pool.size() + 1;
-        auto newTask = new TppDetail::SubTask<Range>(closure, range, *fut, atomic);
+        auto newTask = new TppDetail::SubTask<Range, Callable>(closure, range, *fut, atomic);
         pool.addTask(newTask);
         return std::move(fut);
     }

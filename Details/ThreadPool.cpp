@@ -153,12 +153,5 @@ namespace Carbon {
         size_t IntegerRange::size() const {
             return mEnd > mBegin ? mEnd - mBegin : 0;
         }
-        std::function<void(IntegerRange)> IntegerRange::forEach
-        (const std::function<void(size_t)>& callable) {
-            return [=] (IntegerRange range) {
-                size_t begin = range.mBegin.load();
-                while (begin < range.mEnd) { callable(begin); ++begin; }
-            };
-        }
     }
 }
