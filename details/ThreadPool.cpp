@@ -6,6 +6,11 @@
 #include <condition_variable>
 
 namespace Carbon {
+    void Task::execute() {}
+    bool Task::reusable(std::function<void()>&,bool& reuse) {
+        return false;
+    }
+
     class ThreadPool::TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Task*>;
@@ -66,6 +71,7 @@ namespace Carbon {
         void runThread(TaskQueue* source) {
             Task* task = nullptr;
             std::function<void()> func;
+            bool reuse;
             size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
@@ -74,8 +80,8 @@ namespace Carbon {
                 }
                 if (!mFlag) break;
                 sleep = 1;
-                if (task->reusable(func)) {
-                    source->addTask(task);
+                if (task->reusable(func,reuse)) {
+                    if(reuse)source->addTask(task);
                     func();
                 }
                 else task->execute();
@@ -119,7 +125,20 @@ namespace Carbon {
     }
 
     void TaskGroupFuture::wait() const {
-        while (mLast)std::this_thread::yield();
+        size_t last = mLast,current;
+        using clock = std::chrono::system_clock;
+        auto time = clock::now();
+        while (mLast){
+            current = mLast;
+            if (last != current) {
+                auto now = clock::now();
+                auto wait = (now - time)*current / (last - current);
+                std::this_thread::sleep_for(wait/100);
+                time = now;
+                last = current;
+            }
+            else std::this_thread::yield();
+        }
     }
 
     void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc) {

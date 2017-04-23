@@ -7,11 +7,9 @@
 #include <future>
 
 namespace Carbon {
-    struct Task {
-        using ExecFunction = void(*)();
-        using ReuseableFunction = bool(*)(std::function<void()>&);
-        ExecFunction execute;
-        ReuseableFunction reusable;
+    struct CARBON_API Task {
+        virtual void execute();
+        virtual bool reusable(std::function<void()>& , bool&);
     };
 
     class CARBON_API ThreadPool final {
@@ -77,21 +75,19 @@ namespace Carbon {
                 Apply(callable , tuple);
                 promise.set_value();
             }
-            TaskFunc(Callable call, Ts&&... args) :
-                callable(std::forward<Callable>(call)), tuple(std::forward_as_tuple(args...)) {
-                execute = [this] {
+            TaskFunc(Callable call , Ts&&... args) :
+                callable(std::forward<Callable>(call)) , tuple(std::forward_as_tuple(args...)) {}
+            void execute() override {
+                try {
+                    doAndSet<ReturnType>(promise , callable , tuple);
+                }
+                catch (...) {
                     try {
-                        doAndSet<ReturnType>(promise , callable ,tuple);
+                        promise.set_exception(std::current_exception());
                     }
-                    catch (...) {
-                        try {
-                            promise.set_exception(std::current_exception());
-                        }
-                        catch (...) {}
-                    }
-                    delete this;
-                };
-                reusable = [](std::function<void()>&) { return false; };
+                    catch (...) {}
+                }
+                delete this;
             }
             auto getFuture() { return promise.get_future(); }
             Callable callable;
@@ -101,30 +97,27 @@ namespace Carbon {
 
         template<typename Range>
         struct SubTask : Task {
-            SubTask(const std::function<void(Range)>& call, Range range,
-                TaskGroupFuture& future, size_t atomic)
-                :callable(call), range(range), future(future), atomic(atomic) {
-                execute = [this] {
-                    delete this;
-                };
-                reusable = [this](std::function<void()>& func)->bool {
-                    if (range.size()) {
-                        func = [future=pack->future,call = pack->callable, task = pack->range.cut(pack->atomic)] {
-                            try {
-                                call(task);
-                                future.finish(task.size());
-                            }
-                            catch (...) {
-                                try {
-                                    future.setException(std::current_exception() , task.size());
-                                }
-                                catch (...) {}
-                            }
-                        }
-                        return true;
+            SubTask(const std::function<void(Range)>& call , Range range ,
+                TaskGroupFuture& future , size_t atomic)
+                :callable(call) , range(range) , future(future) , atomic(atomic) {}
+            bool reusable(std::function<void()>& func , bool& reuse)override {
+                Range task = range.cut(atomic);
+                func = [this , task] {
+                    size_t last;
+                    try {
+                        callable(task);
+                        last = future.finish(task.size());
                     }
-                    return false;
+                    catch (...) {
+                        try {
+                            last = future.setException(std::current_exception() , task.size());
+                        }
+                        catch (...) {}
+                    }
+                    if (!last)delete this;
                 };
+                reuse = static_cast<bool>(range.size());
+                return true;
             }
             Range range;
             size_t atomic;
@@ -134,7 +127,7 @@ namespace Carbon {
 
     }
 
-    namespace TaskGroupHelper{
+    namespace TaskGroupHelper {
         class CARBON_API IntegerRange final {
         private:
             size_t mBegin , mEnd;
@@ -160,7 +153,7 @@ namespace Carbon {
         const std::function<void(Range)>& closure , Range range ,
         size_t atomic = 0) {
         auto fut = std::make_unique<TaskGroupFuture>(range.size());
-        if (atomic == 0)atomic = range.size() / pool.size()+1;
+        if (atomic == 0)atomic = range.size() / pool.size() + 1;
         auto newTask = new TppDetail::SubTask<Range>(closure , range , *fut , atomic);
         pool.addTask(newTask);
         return std::move(fut);
