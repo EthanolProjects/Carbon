@@ -56,11 +56,6 @@ namespace Carbon {
 
         constexpr bool operator==(const Vector& r) const noexcept { return x == r.x && y == r.y; }
         constexpr bool operator!=(const Vector& r) const noexcept { return x != r.x || y != r.y; }
-        constexpr bool operator<(const Vector& r) const noexcept { return lengthSqr() < r.lengthSqr(); }
-        constexpr bool operator>(const Vector& r) const noexcept { return lengthSqr() > r.lengthSqr(); }
-        constexpr bool operator<=(const Vector& r) const noexcept { return lengthSqr() <= r.lengthSqr(); }
-        constexpr bool operator>=(const Vector& r) const noexcept { return lengthSqr() >= r.lengthSqr(); }
-
         constexpr T euclideanDistance(const Vector& rhs) const noexcept { return (*this - rhs).length(); }
         constexpr T chebyshevDistance(const Vector& rhs) const noexcept { return std::max(std::abs(x - rhs.x), std::abs(y - rhs.y)); }
         constexpr T manhattanDistance(const Vector& rhs) const noexcept { return std::abs(x - rhs.x) + std::abs(y - rhs.y); }
@@ -122,10 +117,6 @@ namespace Carbon {
 
         constexpr bool operator==(const Vector& r) const noexcept { return x == r.x && y == r.y && z == r.z; }
         constexpr bool operator!=(const Vector& r) const noexcept { return x != r.x || y != r.y || z != r.z; }
-        constexpr bool operator<(const Vector& r) const noexcept { return lengthSqr() < r.lengthSqr(); }
-        constexpr bool operator>(const Vector& r) const noexcept { return lengthSqr() > r.lengthSqr(); }
-        constexpr bool operator<=(const Vector& r) const noexcept { return lengthSqr() <= r.lengthSqr(); }
-        constexpr bool operator>=(const Vector& r) const noexcept { return lengthSqr() >= r.lengthSqr(); }
 
         constexpr T euclideanDistance(const Vector& rhs) const noexcept { return (*this - rhs).length(); }
         constexpr T chebyshevDistance(const Vector& rhs) const noexcept { return std::max(std::max(std::abs(x - rhs.x), std::abs(y - rhs.y)), std::abs(z - rhs.z)); }
@@ -183,32 +174,22 @@ namespace Carbon {
 
         constexpr bool operator==(const Vector& r) const noexcept { return less == r.less && last == r.last; }
         constexpr bool operator!=(const Vector& r) const noexcept { return less != r.less || last != r.last; }
-        constexpr bool operator<(const Vector& r) const noexcept { return lengthSqr() < r.lengthSqr(); }
-        constexpr bool operator>(const Vector& r) const noexcept { return lengthSqr() > r.lengthSqr(); }
-        constexpr bool operator<=(const Vector& r) const noexcept { return lengthSqr() <= r.lengthSqr(); }
-        constexpr bool operator>=(const Vector& r) const noexcept { return lengthSqr() >= r.lengthSqr(); }
 
         constexpr T euclideanDistance(const Vector& rhs) const noexcept { return (*this - rhs).length(); }
         constexpr T chebyshevDistance(const Vector& rhs) const noexcept { return std::max(less.chebyshevDistance(rhs.less), std::abs(last - rhs.last)); }
         constexpr T manhattanDistance(const Vector& rhs) const noexcept { return less.manhattanDistance(rhs.less) + std::abs(last - rhs.last); }
     };
 
-    template <class T>
-    using Vec2 = Vector<2u, T>;
-    using Vec2i = Vec2<int>;
-    using Vec2u = Vec2<unsigned int>;
-    using Vec2f = Vec2<float>;
-    using Vec2d = Vec2<double>;
-    template <class T>
-    using Vec3 = Vector<3, T>;
-    using Vec3i = Vec3<int>;
-    using Vec3f = Vec3<float>;
-    using Vec3d = Vec3<double>;
-    template <class T>
-    using Vec4 = Vector<4, T>;
-    using Vec4i = Vec4<int>;
-    using Vec4f = Vec4<float>;
-    using Vec4d = Vec4<double>;
+#define _CB_CEXPR_VEC_S(s) template <class T> using Vec##s = Vector<s, T>;
+#define _CB_CEXPR_VEC_E(s)  _CB_CEXPR_VEC_S(s) \
+    using Vec##s##i = Vec##s<int>; using Vec##s##u = Vec##s<unsigned int>; \
+    using Vec##s##f = Vec##s<float>; using Vec##s##d = Vec##s<double>;
+    _CB_CEXPR_VEC_E(2) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(4)
+#undef _CB_CEXPR_VEC_S
+
+#define _CB_CEXPR_VECRELOP(x) template <std::size_t D, class T> constexpr bool operator x (const Vector<D, T>& l, const Vector<D, T>& r) noexcept { return l.lengthSqr() x r.lengthSqr(); }
+    _CB_CEXPR_VECRELOP(<=) _CB_CEXPR_VECRELOP(>=) _CB_CEXPR_VECRELOP(<) _CB_CEXPR_VECRELOP(>)
+#undef _CB_CEXPR_VEC_REL_OP
 
     template<class T, std::size_t rows, std::size_t cols>
     class Matrix {

@@ -1,12 +1,12 @@
 #include UNITTESTINC
 #include "Concurrency.hpp"
+#include "Math.hpp"
 #include "Log.hpp"
 #include <vector>
 #include <future>
 
 namespace CarbonTests {
     namespace ConcurrencyTests {
-
         auto obj = []() {
             int c = 0;
             for (int i = 0; i < 1000; ++i)
@@ -14,10 +14,11 @@ namespace CarbonTests {
             return c;
         };
 
-        BEGIN_TEST_GROUP(Concurrency)
 #define ETH_TEST_SUITE Concurrency
+        BEGIN_TEST_GROUP
+        static constexpr size_t maxNum = 1000000;
 
-            void testThreadPool(size_t testCount) {
+        void testThreadPool(size_t testCount) {
             Carbon::ThreadPool pool{};
             std::vector<std::future<int>> futs; futs.reserve(testCount);
             std::atomic_size_t count{ 0 };
@@ -60,7 +61,6 @@ namespace CarbonTests {
         COR_TEST(ThreadPool);
         COR_TEST(ThreadPoolTaskGroup);
 
-        static constexpr size_t maxNum = 1000000;
         TEST_METHOD(ThreadPoolExtremalTest) {
             using namespace std::literals;
             Carbon::ThreadPool A{}, B{};
@@ -98,6 +98,16 @@ namespace CarbonTests {
 
 #undef ETH_TEST_SUITE
         END_TEST_GROUP
+    }
+    namespace MathTests {
+#define ETH_TEST_SUITE(Math)
+        BEGIN_TEST_GROUP
+            TEST_METHOD(CEXPRVec2iAdd) {
+            using Vec = Carbon::Vec2i;
+            ASSERT_TRUE(Vec(1, 1) + Vec(2, 2) == Vec(3, 3));
+        }
+        END_TEST_GROUP
+#undef ETH_TEST_SUITE
     }
 }
 RUN_TESTS
