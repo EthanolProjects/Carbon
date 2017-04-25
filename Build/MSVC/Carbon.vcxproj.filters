@@ -26,9 +26,6 @@
     <ClInclude Include="..\..\Carbon\Mpl.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Timer.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Carbon\Carbon.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -40,14 +37,14 @@
     <ClCompile Include="..\..\Details\Dll.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\LogEntry.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Details\Math.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Details\ThreadPool.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Log.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Carbon\Format.h">
+      <Filter>Headers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

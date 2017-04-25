@@ -26,12 +26,11 @@
     <ClInclude Include="..\..\Carbon\Log.hpp" />
     <ClInclude Include="..\..\Carbon\Math.hpp" />
     <ClInclude Include="..\..\Carbon\Mpl.hpp" />
-    <ClInclude Include="..\..\Carbon\Timer.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Carbon\Format.h" />
     <ClCompile Include="..\..\Details\Dll.cpp" />
-    <ClCompile Include="..\..\Details\LogEntry.cpp" />
-    <ClCompile Include="..\..\Details\Math.cpp" />
+    <ClCompile Include="..\..\Details\Log.cpp" />
     <ClCompile Include="..\..\Details\ThreadPool.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

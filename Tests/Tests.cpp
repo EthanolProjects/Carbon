@@ -100,9 +100,9 @@ namespace CarbonTests {
         END_TEST_GROUP
     }
     namespace MathTests {
-#define ETH_TEST_SUITE(Math)
+#define ETH_TEST_SUITE MathTests
         BEGIN_TEST_GROUP
-            TEST_METHOD(CEXPRVec2iAdd) {
+        TEST_METHOD(Vec2iAdd) {
             using Vec = Carbon::Vec2i;
             ASSERT_TRUE(Vec(1, 1) + Vec(2, 2) == Vec(3, 3));
         }
