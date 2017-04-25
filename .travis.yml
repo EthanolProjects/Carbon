@@ -13,7 +13,7 @@ matrix:
             - libgtest-dev
 install:
 script:
-  - cd ./bin 
+  - mkdir bin && cd ./bin 
   - cmake .. -Wno-dev
   - cmake --build .
   - cd ..
