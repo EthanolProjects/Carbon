@@ -1,6 +1,9 @@
 language: generic
 sudo: required
 dist: trusty
+cache:
+  directories:	
+    - bin/CMakeFiles/
 matrix:
   include:
     - os: linux
@@ -13,19 +16,17 @@ matrix:
             - llvm-toolchain-precise-3.8
             - ubuntu-toolchain-r-test
           packages:
-            - libgtest-dev
             - g++-6
             - gcc-6
             - p7zip
             - cmake
             - cmake-data
+            - libgtest-dev
 install:
   - sudo ln -s /usr/bin/g++-6 /usr/bin/g++ -f
-install:
+  - sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc -f
 script:
-  - mkdir bin && cd ./bin 
-  - cmake .. -Wno-dev -DCMAKE_BUILD_TYPE=Release
-  - cmake --build .
-  - ./CarbonTests
+  - mkdir bin && cd bin
+  - cmake .. -Wno-dev
+  - make
   - cd ..
-  
