@@ -7,6 +7,11 @@ matrix:
       env: COMPILER_NAME=gcc
       addons:
         apt:
+          sources:
+            - george-edison55-precise-backports
+            - kalakris-cmake
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
           packages:
             - libgtest-dev
             - g++-6
