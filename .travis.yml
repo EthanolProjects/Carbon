@@ -4,23 +4,14 @@ dist: trusty
 matrix:
   include:
     - os: linux
-      env: COMPILER_NAME=gcc
+      env: COMPILER_NAME=clang
       addons:
         apt:
-          sources:
-            - george-edison55-precise-backports
-            - kalakris-cmake
-            - llvm-toolchain-precise-3.8
-            - ubuntu-toolchain-r-test
           packages:
-            - g++-6
-            - gcc-6
             - p7zip
             - cmake
-            - cmake-data
-            - gtest
+            - libgtest-dev
 install:
-  - sudo ln -s /usr/bin/g++-6 /usr/bin/g++ -f
 script:
   - cd ./bin 
   - cmake .. -Wno-dev
