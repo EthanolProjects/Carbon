@@ -14,6 +14,9 @@
     <ClInclude Include="UnitTestMSVC.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\UNIX\UnitTestUNIX.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Tests\Tests.cpp">

@@ -24,6 +24,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\UNIX\UnitTestUNIX.h" />
     <ClInclude Include="UnitTestMSVC.h" />
   </ItemGroup>
   <ItemGroup>

@@ -184,7 +184,7 @@ namespace Carbon {
 #define _CB_CEXPR_VEC_E(s)  _CB_CEXPR_VEC_S(s) \
     using Vec##s##i = Vec##s<int>; using Vec##s##u = Vec##s<unsigned int>; \
     using Vec##s##f = Vec##s<float>; using Vec##s##d = Vec##s<double>;
-    _CB_CEXPR_VEC_E(2) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(4)
+    _CB_CEXPR_VEC_E(2) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(4)
 #undef _CB_CEXPR_VEC_S
 
 #define _CB_CEXPR_VECRELOP(x) template <std::size_t D, class T> constexpr bool operator x (const Vector<D, T>& l, const Vector<D, T>& r) noexcept { return l.lengthSqr() x r.lengthSqr(); }
