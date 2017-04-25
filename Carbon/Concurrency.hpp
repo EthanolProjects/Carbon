@@ -62,14 +62,21 @@ namespace Carbon {
     };
 
     namespace TppDetail {
+        template<typename T>
+        void doAndSet(std::promise<T>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
+            promise.set_value(Apply(callable, tuple));
+        }
+        
+        template<>
+        void doAndSet<void>(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
+            Apply(callable, tuple);
+            promise.set_value();
+        }
+        
         template <class Callable, class ...Ts>
         class TaskFunc :public Task {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
-            template<typename T>
-            static void doAndSet(std::promise<T>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
-                promise.set_value(Apply(callable, tuple));
-            }
         public:
             TaskFunc(Callable call, Ts&&... args) :
                 mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) {}
@@ -91,12 +98,6 @@ namespace Carbon {
             std::tuple<Ts...> mTuple;
             std::promise<ReturnType> mPromise;
         };
-        
-        template<class Callable, class ...Ts>
-        void TaskFunc<Callable, Ts...>::doAndSet<void>(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
-            Apply(callable, tuple);
-            promise.set_value();
-        }
 
         template<typename Range, typename Callable>
         class SubTask :public Task {
