@@ -16,5 +16,6 @@ script:
   - mkdir bin && cd ./bin 
   - cmake .. -Wno-dev
   - cmake --build .
+  - ./CarbonTests
   - cd ..
   
