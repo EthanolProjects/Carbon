@@ -50,7 +50,7 @@ namespace Carbon {
         bool wait_for(const std::chrono::duration<Rep, Period>& time) const {
             return wait_until(std::chrono::system_clock::now() + time);
         }
-        void TaskGroupFuture::catchExceptions(const std::function<void(std::function<void()>)>& catchFunc);
+        void catchExceptions(const std::function<void(std::function<void()>)>& catchFunc);
     private:
         template<typename T, typename T2>
         friend class TppDetail::SubTask;
