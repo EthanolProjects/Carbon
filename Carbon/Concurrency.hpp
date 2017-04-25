@@ -62,31 +62,30 @@ namespace Carbon {
     };
 
     namespace TppDetail {
+        template<typename T, class Callable, class ...Ts>
+        struct ApplyImpl {
+            static void doAndSet(std::promise<T>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
+                promise.set_value(Apply(callable, tuple));
+            }
+        };
+
+        template<class Callable, class ...Ts>
+        struct ApplyImpl<void, Callable, Ts...> {
+            static void doAndSet(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
+                Apply(callable, tuple);
+                promise.set_value();
+            }
+        };
         template <class Callable, class ...Ts>
         class TaskFunc :public Task {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
-
-            template<typename T>
-            struct ApplyImpl {
-                static void doAndSet(std::promise<T>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
-                    promise.set_value(Apply(callable, tuple));
-                }
-            };
-
-            template<>
-            struct ApplyImpl<void> {
-                static void doAndSet(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
-                    Apply(callable, tuple);
-                    promise.set_value();
-                }
-            };
         public:
             TaskFunc(Callable call, Ts&&... args) :
                 mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) {}
             void execute() override {
                 try {
-                    ApplyImpl<ReturnType>::doAndSet(mPromise, mCallable, mTuple);
+                    ApplyImpl<ReturnType, Callable, Ts...>::doAndSet(mPromise, mCallable, mTuple);
                 }
                 catch (...) {
                     try {
