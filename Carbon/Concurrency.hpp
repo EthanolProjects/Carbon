@@ -70,11 +70,6 @@ namespace Carbon {
             static void doAndSet(std::promise<T>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
                 promise.set_value(Apply(callable, tuple));
             }
-            template<>
-            static void doAndSet<void>(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
-                Apply(callable, tuple);
-                promise.set_value();
-            }
         public:
             TaskFunc(Callable call, Ts&&... args) :
                 mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) {}
@@ -96,6 +91,12 @@ namespace Carbon {
             std::tuple<Ts...> mTuple;
             std::promise<ReturnType> mPromise;
         };
+        
+        template<class Callable, class ...Ts>
+        void TaskFunc<Callable, Ts...>::doAndSet<void>(std::promise<void>& promise, Callable& callable, std::tuple<Ts...>& tuple) {
+            Apply(callable, tuple);
+            promise.set_value();
+        }
 
         template<typename Range, typename Callable>
         class SubTask :public Task {
