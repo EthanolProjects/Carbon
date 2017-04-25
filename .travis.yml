@@ -8,13 +8,14 @@ matrix:
       addons:
         apt:
           packages:
+            - clang
             - p7zip
             - cmake
             - libgtest-dev
 install:
 script:
   - mkdir bin && cd ./bin 
-  - cmake .. -Wno-dev
+  - cmake .. -Wno-dev -DCMAKE_CXX_COMPILER=clang++ -D_CMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release
   - cmake --build .
   - ./CarbonTests
   - cd ..
