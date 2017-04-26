@@ -207,7 +207,7 @@ namespace Carbon {
         }
 
         template <class ContT>
-        ContT£¦ vecAddEq(ContT& l, const ContT& r) {
+        ContT& vecAddEq(ContT& l, const ContT& r) {
             for (size_t i = 0; i < l.size(); ++i) l[i] += r[i]; return l;
         }
 
@@ -217,7 +217,7 @@ namespace Carbon {
         }
 
         template <class ContT>
-        ContT£¦ vecMinusEq(ContT& l, const ContT& r) {
+        ContT& vecMinusEq(ContT& l, const ContT& r) {
             for (size_t i = 0; i < l.size(); ++i) l[i] -= r[i]; return l;
         }
 
@@ -227,13 +227,13 @@ namespace Carbon {
         }
 
         template <class ContT, class T>
-        ContT£¦ vecScalerEq(ContT& l, const T& r) {
+        ContT& vecScalerEq(ContT& l, const T& r) {
             for (size_t i = 0; i < l.size(); ++i) l[i] *= r[i]; return l;
         }
 
         template <class ContT>
         auto vecDot(const ContT& l, const ContT& r) {
-            ContT::value_type res = 0;
+            typename ContT::value_type res = 0;
             for (size_t i = 0; i < l.size(); ++i) res += l[i] * r[i]; return res;
         }
     }

@@ -37,8 +37,10 @@ install:
     fi
   - cd ./googletest
   - sudo make install
+  - cd ..
 script:
   - cd bin
   - cmake .. -Wno-dev
   - make
+  - ./CarbonTest
   - cd ..
