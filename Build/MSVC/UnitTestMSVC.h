@@ -2,7 +2,6 @@
 #include "CppUnitTest.h"
 #define BEGIN_TEST_GROUP TEST_CLASS(ETH_TEST_SUITE) { public:
 #define END_TEST_GROUP };
-#define RUN_TESTS
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 #define ASSERT_TRUE(v) Assert::IsTrue(v,nullptr,LINE_INFO())
 #define ASSERT_FALSE(v) Assert::IsFalse(v,nullptr,LINE_INFO())

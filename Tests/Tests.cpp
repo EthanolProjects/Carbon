@@ -110,4 +110,3 @@ namespace CarbonTests {
 #undef ETH_TEST_SUITE
     }
 }
-RUN_TESTS
