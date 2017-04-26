@@ -180,6 +180,19 @@ namespace Carbon {
         constexpr T manhattanDistance(const Vector& rhs) const noexcept { return less.manhattanDistance(rhs.less) + std::abs(last - rhs.last); }
     };
 
+    // Relational Operations
+    template <std::size_t D, class T>
+    Vector<D, T> dot(const Vector<D, T>& l, const Vector<D, T>& r) { return l.dot(r); }
+
+    template <std::size_t D, class T>
+    Vector<D, T> operator * (size_t scale, const Vector<D, T>& r) { return r * scale; }
+
+    // Compare Operations
+#define _CB_CEXPR_VECRELOP(x) template <std::size_t D, class T> constexpr bool operator x \
+(const Vector<D, T>& l, const Vector<D, T>& r) noexcept { return l.lengthSqr() x r.lengthSqr(); }
+    _CB_CEXPR_VECRELOP(<=) _CB_CEXPR_VECRELOP(>=) _CB_CEXPR_VECRELOP(<) _CB_CEXPR_VECRELOP(>)
+#undef _CB_CEXPR_VEC_REL_OP
+
 #define _CB_CEXPR_VEC_S(s) template <class T> using Vec##s = Vector<s, T>;
 #define _CB_CEXPR_VEC_E(s)  _CB_CEXPR_VEC_S(s) \
     using Vec##s##i = Vec##s<int>; using Vec##s##u = Vec##s<unsigned int>; \
@@ -187,9 +200,43 @@ namespace Carbon {
     _CB_CEXPR_VEC_E(2) _CB_CEXPR_VEC_E(3) _CB_CEXPR_VEC_E(4)
 #undef _CB_CEXPR_VEC_S
 
-#define _CB_CEXPR_VECRELOP(x) template <std::size_t D, class T> constexpr bool operator x (const Vector<D, T>& l, const Vector<D, T>& r) noexcept { return l.lengthSqr() x r.lengthSqr(); }
-    _CB_CEXPR_VECRELOP(<=) _CB_CEXPR_VECRELOP(>=) _CB_CEXPR_VECRELOP(<) _CB_CEXPR_VECRELOP(>)
-#undef _CB_CEXPR_VEC_REL_OP
+    namespace Math {
+        template <class ContT>
+        ContT vecAdd(const ContT& l, const ContT& r) { 
+            ContT res; for (size_t i = 0; i < l.size(); ++i) res[i] = l[i] + r[i]; return res;
+        }
+
+        template <class ContT>
+        ContT£¦ vecAddEq(ContT& l, const ContT& r) {
+            for (size_t i = 0; i < l.size(); ++i) l[i] += r[i]; return l;
+        }
+
+        template <class ContT>
+        ContT vecMinus(const ContT& l, const ContT& r) {
+            ContT res; for (size_t i = 0; i < l.size(); ++i) res[i] = l[i] - r[i]; return res;
+        }
+
+        template <class ContT>
+        ContT£¦ vecMinusEq(ContT& l, const ContT& r) {
+            for (size_t i = 0; i < l.size(); ++i) l[i] -= r[i]; return l;
+        }
+
+        template <class ContT, class T>
+        ContT vecScaler(const ContT& l, const T& r) {
+            ContT res; for (size_t i = 0; i < l.size(); ++i) res[i] = l[i] * r; return res;
+        }
+
+        template <class ContT, class T>
+        ContT£¦ vecScalerEq(ContT& l, const T& r) {
+            for (size_t i = 0; i < l.size(); ++i) l[i] *= r[i]; return l;
+        }
+
+        template <class ContT>
+        auto vecDot(const ContT& l, const ContT& r) {
+            ContT::value_type res = 0;
+            for (size_t i = 0; i < l.size(); ++i) res += l[i] * r[i]; return res;
+        }
+    }
 
     template<class T, std::size_t rows, std::size_t cols>
     class Matrix {
