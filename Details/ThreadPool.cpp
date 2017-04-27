@@ -1,6 +1,7 @@
 #include "Concurrency.hpp"
 #include "ThirdParty/LockFree/Queue.hpp"
 #include <queue>
+#include <condition_variable>
 
 namespace Carbon {
     bool Task::reusable() {
@@ -54,31 +55,35 @@ namespace Carbon {
         ThreadGroup(TaskQueue* source, size_t count) {
             mFlag = true;
             for (size_t i = 0; i < count; ++i)
-                mThreads.emplace_back([this, source] () { runThread(source); });
+                mThreads.emplace_back([this, source] () noexcept { runThread(source); });
         }
         ~ThreadGroup() {
             mFlag = false;
+            wakeAllOnDemand();
             for (auto&& thread : mThreads)
                 if (thread.joinable())
                     thread.join();
         }
+        void wakeOneOnDemand() noexcept { mHolder.notify_one(); }
+        void wakeAllOnDemand() noexcept { mHolder.notify_all(); }
     private:
-        static constexpr size_t maxSleep = 1000;
-        void runThread(TaskQueue* source) {
+        void runThread(TaskQueue* source) noexcept {
             Task* task = nullptr;
             size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
-                    if (++sleep > maxSleep)sleep = maxSleep;
-                    std::this_thread::sleep_for(std::chrono::microseconds(sleep));
+                    // TODO: apply a rotation lock is necessary
+                    std::unique_lock<std::mutex> lock(mSleep);
+                    mHolder.wait(lock); // Hold the thread
                 }
                 if (!mFlag) break;
-                sleep = 1;
                 if (task->reusable())source->addTask(task);
                 task->execute();
             }
         }
+        std::mutex mSleep;
         std::atomic_bool mFlag;
+        std::condition_variable mHolder;
         std::vector<std::thread> mThreads;
     };
 
@@ -91,6 +96,7 @@ namespace Carbon {
 
     void ThreadPool::addTask(Task* task) {
         mSource->addTask(task);
+        mThreads->wakeOneOnDemand();
     }
 
     size_t ThreadPool::size() const {
