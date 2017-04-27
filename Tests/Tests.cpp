@@ -7,13 +7,13 @@
 
 namespace CarbonTests {
     namespace ConcurrencyTests {
-        auto obj = []() {
+        auto obj = []{
             int c = 0;
             for (int i = 1; i <= 1000; ++i)
                 c += rand()%i;
             return c;
         };
-        auto obj2 = [] () {
+        auto obj2 = []{
             return rand();
         };
 
@@ -62,7 +62,7 @@ namespace CarbonTests {
         COR_TEST(ThreadPool);
         COR_TEST(ThreadPoolTaskGroup);
 
-        static constexpr size_t maxNum = 1000000;
+        static constexpr size_t maxNum = 10;
 
         TEST_METHOD(ThreadPoolExtremalTest) {
             using namespace std::literals;
@@ -74,7 +74,7 @@ namespace CarbonTests {
                 if (rand() > RAND_MAX / 2) {
                     std::vector<std::future<void>> v; v.reserve(range.size());
                     range.forEach([&](size_t i) {
-                        v.push_back(Carbon::Async(B, [&, i] {result[i] = obj(); }));
+                        v.push_back(Carbon::Async(B, [&, i] {result[i] = obj2(); }));
                     });
                     for (auto&& x : v) x.wait();
                 }
@@ -83,12 +83,14 @@ namespace CarbonTests {
             Carbon::AsyncGroup(A, { 0,maxNum }, func2, 128)->wait();
         }
 
+        /*
         TEST_METHOD(PerfTestOMP) {
             std::vector<int> result(maxNum);
 #          pragma omp parallel for
             for (int i = 0; i < maxNum; ++i)
                 result[i] = obj2();
         }
+        
 
         TEST_METHOD(PerfTestCTP) {
             std::vector<int> result(maxNum);
@@ -97,6 +99,7 @@ namespace CarbonTests {
             auto future = Carbon::AsyncGroup(pool, { 0,maxNum }, func);
             future->wait();
         }
+        */
 
 #undef ETH_TEST_SUITE
         END_TEST_GROUP
