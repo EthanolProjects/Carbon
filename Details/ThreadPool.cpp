@@ -96,7 +96,7 @@ namespace Carbon {
 
     void ThreadPool::addTask(Task* task) {
         mSource->addTask(task);
-        mThreads->wakeOneOnDemand();
+        mThreads->wakeAllOnDemand();
     }
 
     size_t ThreadPool::size() const {
@@ -145,19 +145,25 @@ namespace Carbon {
         }
         mExceptions.clear();
     }
-    namespace TaskGroupHelper {
-        IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
-        IntegerRange::IntegerRange(const IntegerRange & rhs)
-            : mBegin(rhs.mBegin.load()), mEnd(rhs.mEnd) {}
-        IntegerRange IntegerRange::cut(size_t atomic) {
-            size_t lb = mBegin.load();
-            size_t end;
-            do end = std::min(lb + atomic, mEnd);
-            while (!mBegin.compare_exchange_weak(lb, end));
-            return { lb,end };
-        }
-        size_t IntegerRange::size() const {
-            return mEnd > mBegin ? mEnd - mBegin : 0;
-        }
+
+    IntegerRange::IntegerRange(size_t begin, size_t end) :mBegin(begin), mEnd(end) {}
+    IntegerRange::IntegerRange(const IntegerRange & rhs)
+        : mBegin(rhs.mBegin.load()), mEnd(rhs.mEnd) {}
+    IntegerRange IntegerRange::cut(size_t atomic) {
+        size_t lb = mBegin.load();
+        size_t end;
+        do end = std::min(lb + atomic, mEnd);
+        while (!mBegin.compare_exchange_weak(lb, end));
+        return { lb,end };
+    }
+    size_t IntegerRange::size() const {
+        return mEnd > mBegin ? mEnd - mBegin : 0;
+    }
+    void IntegerRange::forEach(const std::function<void(size_t)>& callable) const {
+        size_t begin = mBegin.load();
+        while (begin < mEnd) { callable(begin); ++begin; }
+    }
+    void IntegerRange::forEach(const std::function<void(IntegerRange)>& callable) const {
+        callable(*this);
     }
 }
