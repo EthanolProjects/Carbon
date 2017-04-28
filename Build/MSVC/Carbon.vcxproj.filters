@@ -9,6 +9,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Headers\Concurrency">
+      <UniqueIdentifier>{7dd1f5b2-236c-4859-877c-0dc7367d91fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Config.hpp">
@@ -31,6 +34,12 @@
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Concurrency.hpp">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency\TaskTypes.h">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency\Thread.h">
+      <Filter>Headers\Concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

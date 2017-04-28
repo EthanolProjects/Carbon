@@ -21,6 +21,8 @@
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Carbon.hpp" />
     <ClInclude Include="..\..\Carbon\Concurrency.hpp" />
+    <ClInclude Include="..\..\Carbon\Concurrency\TaskTypes.h" />
+    <ClInclude Include="..\..\Carbon\Concurrency\Thread.h" />
     <ClInclude Include="..\..\Carbon\Config.hpp" />
     <ClInclude Include="..\..\Carbon\Dll.hpp" />
     <ClInclude Include="..\..\Carbon\Log.hpp" />
