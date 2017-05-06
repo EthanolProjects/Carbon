@@ -1,10 +1,8 @@
 #include "Dll.hpp"
+#include "PlatformControl.hpp"
 #include <stdexcept>
 namespace Carbon {
 #ifdef CARBON_TARGET_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <Windows.h>
     class DynamicLibrary::DyImpl {
     public:
         DyImpl(const char* path) {

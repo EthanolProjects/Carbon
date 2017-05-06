@@ -21,7 +21,7 @@ namespace CarbonTests {
         BEGIN_TEST_GROUP
 
         void testThreadPool(size_t testCount) {
-            Carbon::ThreadPool pool{};
+            auto& pool = Carbon::ThreadPool::getDefaultThreadPool();
             std::vector<std::future<int>> futs; futs.reserve(testCount);
             std::atomic_size_t count{ 0 };
             for (size_t i = 0; i < testCount; ++i)
@@ -34,7 +34,7 @@ namespace CarbonTests {
         }
 
         void testThreadPoolTaskGroup(size_t testCount) {
-            Carbon::ThreadPool pool{};
+            auto& pool = Carbon::ThreadPool::getDefaultThreadPool();
             std::vector<int> result(testCount);
             std::atomic_size_t count{ 0 };
             auto func = [&](size_t i) {
@@ -65,7 +65,7 @@ namespace CarbonTests {
         static constexpr size_t maxNum = 10;
 
         TEST_METHOD(ThreadPoolExtremalTest) {
-            using namespace std::literals;
+            /*using namespace std::literals;
             Carbon::ThreadPool A{}, B{};
             using Range = Carbon::IntegerRange;
             std::vector<int> result(maxNum);
@@ -80,7 +80,7 @@ namespace CarbonTests {
                 }
                 else Carbon::AsyncGroup(B, range, func1)->wait();
             };
-            Carbon::AsyncGroup(A, { 0,maxNum }, func2, 128)->wait();
+            Carbon::AsyncGroup(A, { 0,maxNum }, func2, 128)->wait();*/
         }
 
         /*

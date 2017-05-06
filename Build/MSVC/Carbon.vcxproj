@@ -28,6 +28,7 @@
     <ClInclude Include="..\..\Carbon\Log.hpp" />
     <ClInclude Include="..\..\Carbon\Math.hpp" />
     <ClInclude Include="..\..\Carbon\Mpl.hpp" />
+    <ClInclude Include="..\..\Details\PlatformControl.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Carbon\Format.h" />

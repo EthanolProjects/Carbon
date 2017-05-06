@@ -1,13 +1,43 @@
 #include "Concurrency.hpp"
+#include "PlatformControl.hpp"
 #include "ThirdParty/LockFree/Queue.hpp"
 #include <queue>
 #include <condition_variable>
 
 namespace Carbon {
-    bool Task::reusable() {
-        return false;
-    }
-
+#ifdef CARBON_TARGET_WINDOWS
+    class GlobalThreadPool final : public ThreadPool {
+    public:
+        void addTask(Task* task) override {
+            TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID taskIn) {
+                auto task = reinterpret_cast<Task*>(taskIn); 
+                if (task->reusable())
+                    getDefaultThreadPool().addTask(task);
+                task->execute();
+            }, task, nullptr);
+        }
+    };
+    class LocalThreadPool final : public ThreadPool {
+    public:
+        void addTask(Task*) override {}
+    };
+    ThreadPool& ThreadPool::getDefaultThreadPool() noexcept { static GlobalThreadPool pool; return pool; }
+    std::unique_ptr<ThreadPool> ThreadPool::createThreadPool() { return std::make_unique<LocalThreadPool>(); }
+#else
+    class CARBON_API ThreadPool final {
+    public:
+        ThreadPool();
+        ThreadPool(size_t num);
+        ~ThreadPool();
+        void addTask(Task* task);
+        size_t size() const;
+    private:
+        class TaskQueue;
+        class ThreadGroup;
+        size_t mSize;
+        std::unique_ptr<TaskQueue> mSource;
+        std::unique_ptr<ThreadGroup> mThreads;
+    };
     class ThreadPool::TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Task*>;
@@ -106,6 +136,7 @@ namespace Carbon {
     ThreadPool::~ThreadPool() {
         mThreads.reset();
     }
+#endif
 
     TaskGroupFuture::TaskGroupFuture(size_t size) :mLast(size) {}
     TaskGroupFuture::~TaskGroupFuture() {
