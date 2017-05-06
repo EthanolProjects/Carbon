@@ -9,18 +9,44 @@ namespace Carbon {
     class GlobalThreadPool final : public ThreadPool {
     public:
         void addTask(Task* task) override {
-            TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID taskIn) {
-                auto task = reinterpret_cast<Task*>(taskIn); 
-                if (task->reusable())
-                    getDefaultThreadPool().addTask(task);
-                task->execute();
-            }, task, nullptr);
+            SubmitThreadpoolWork(CreateThreadpoolWork([](PTP_CALLBACK_INSTANCE, PVOID taskIn, PTP_WORK work) {
+                auto task = reinterpret_cast<Task*>(taskIn);
+                if (task->reusable()) {
+                    SubmitThreadpoolWork(work);
+                    task->execute();
+                }
+                else {
+                    task->execute();
+                    CloseThreadpoolWork(work);
+                }
+            }, task, nullptr));
         }
     };
     class LocalThreadPool final : public ThreadPool {
     public:
-        void addTask(Task*) override {}
+        LocalThreadPool() {
+            InitializeThreadpoolEnvironment(&mEnv);
+        }
+        ~LocalThreadPool() {
+            DestroyThreadpoolEnvironment(&mEnv);
+        }
+        void addTask(Task* task) override {
+            SubmitThreadpoolWork(CreateThreadpoolWork([](PTP_CALLBACK_INSTANCE, PVOID taskIn, PTP_WORK work) {
+                auto task = reinterpret_cast<Task*>(taskIn);
+                if (task->reusable()) {
+                    SubmitThreadpoolWork(work);
+                    task->execute();
+                }
+                else {
+                    task->execute();
+                    CloseThreadpoolWork(work);
+                }
+            }, task, &mEnv));
+        }
+    private:
+        TP_CALLBACK_ENVIRON mEnv;
     };
+
     ThreadPool& ThreadPool::getDefaultThreadPool() noexcept { static GlobalThreadPool pool; return pool; }
     std::unique_ptr<ThreadPool> ThreadPool::createThreadPool() { return std::make_unique<LocalThreadPool>(); }
 #else
