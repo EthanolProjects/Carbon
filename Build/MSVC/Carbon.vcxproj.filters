@@ -12,12 +12,15 @@
     <Filter Include="Headers\Concurrency">
       <UniqueIdentifier>{7dd1f5b2-236c-4859-877c-0dc7367d91fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Windows">
+      <UniqueIdentifier>{6b873524-f293-4554-99f0-2ae3bedfbc51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Posix">
+      <UniqueIdentifier>{d90c2ad2-bcd6-4f7a-822c-bf96d2f4978b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Config.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Dll.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Log.hpp">
@@ -41,22 +44,34 @@
     <ClInclude Include="..\..\Carbon\Concurrency\Thread.h">
       <Filter>Headers\Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Details\PlatformControl.hpp">
-      <Filter>Source</Filter>
+    <ClInclude Include="..\..\Details\Windows\CarbonTargetWindows.hpp">
+      <Filter>Source\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Details\Dll.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Details\ThreadPool.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Details\Log.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Carbon\Format.h">
       <Filter>Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Windows\ConcurrencyTpWindows.cpp">
+      <Filter>Source\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\ConcurrencyTpCommon.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Posix\ConcurrencyTpPosix.cpp">
+      <Filter>Source\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Posix\DynamicLibraryCPosix.cpp">
+      <Filter>Source\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Windows\DynamicLibraryCWindows.cpp">
+      <Filter>Source\Windows</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

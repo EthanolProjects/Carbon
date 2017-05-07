@@ -24,17 +24,20 @@
     <ClInclude Include="..\..\Carbon\Concurrency\TaskTypes.h" />
     <ClInclude Include="..\..\Carbon\Concurrency\Thread.h" />
     <ClInclude Include="..\..\Carbon\Config.hpp" />
-    <ClInclude Include="..\..\Carbon\Dll.hpp" />
+    <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp" />
     <ClInclude Include="..\..\Carbon\Log.hpp" />
     <ClInclude Include="..\..\Carbon\Math.hpp" />
     <ClInclude Include="..\..\Carbon\Mpl.hpp" />
-    <ClInclude Include="..\..\Details\PlatformControl.hpp" />
+    <ClInclude Include="..\..\Details\Windows\CarbonTargetWindows.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Carbon\Format.h" />
-    <ClCompile Include="..\..\Details\Dll.cpp" />
+    <ClCompile Include="..\..\Details\ConcurrencyTpCommon.cpp" />
     <ClCompile Include="..\..\Details\Log.cpp" />
-    <ClCompile Include="..\..\Details\ThreadPool.cpp" />
+    <ClCompile Include="..\..\Details\Posix\ConcurrencyTpPosix.cpp" />
+    <ClCompile Include="..\..\Details\Posix\DynamicLibraryCPosix.cpp" />
+    <ClCompile Include="..\..\Details\Windows\ConcurrencyTpWindows.cpp" />
+    <ClCompile Include="..\..\Details\Windows\DynamicLibraryCWindows.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

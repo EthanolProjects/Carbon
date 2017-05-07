@@ -13,13 +13,13 @@ namespace Carbon {
         virtual bool reusable() { return false; }
     };
 
-    class CARBON_API ThreadPool {
+    class CARBON_API Threadpool {
     public:
-        virtual ~ThreadPool() {}
-        virtual void addTask(Task* task) = 0;
+        virtual ~Threadpool() {}
+        virtual void submit(Task* task) = 0;
         virtual size_t getConcurrencyLevel() { return std::thread::hardware_concurrency(); }
-        static ThreadPool& getDefaultThreadPool() noexcept;
-        static std::unique_ptr<ThreadPool> createThreadPool();
+        static Threadpool& default() noexcept;
+        static std::unique_ptr<Threadpool> create();
     };
 
     namespace TppDetail {
@@ -143,20 +143,20 @@ namespace Carbon {
     }
 
     template<class Callable, class ...Ts>
-    inline auto Async(ThreadPool& pool, const Callable& callable, Ts&&... args) {
+    inline auto Async(Threadpool& pool, const Callable& callable, Ts&&... args) {
         auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
-        pool.addTask(newTask);
+        pool.submit(newTask);
         return fut;
     }
 
     template< typename Callable>
-    inline auto AsyncGroup(ThreadPool& pool, IntegerRange range, const Callable& closure, size_t atomic = 0) {
+    inline auto AsyncGroup(Threadpool& pool, IntegerRange range, const Callable& closure, size_t atomic = 0) {
         auto fut = std::make_unique<TaskGroupFuture>(range.size());
         if (atomic == 0)
             atomic = range.size() / pool.getConcurrencyLevel() + 1;
         auto newTask = new TppDetail::SubTask<Callable>(closure, range, *fut, atomic);
-        pool.addTask(newTask);
+        pool.submit(newTask);
         return std::move(fut);
     }
 
