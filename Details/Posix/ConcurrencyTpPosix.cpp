@@ -97,7 +97,7 @@ namespace CarbonPosix {
             mSource->submit(task);
             mThreads->wakeAllOnDemand();
         }
-        size_t getConcurrencyLevel() override { return mSize; }
+        size_t getConcurrencyLevel() const override { return mSize; }
     private:
         size_t mSize;
         std::unique_ptr<TaskQueue> mSource;

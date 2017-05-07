@@ -17,7 +17,7 @@ namespace Carbon {
     public:
         virtual ~Threadpool() {}
         virtual void submit(Task* task) = 0;
-        virtual size_t getConcurrencyLevel() { return std::thread::hardware_concurrency(); }
+        virtual size_t getConcurrencyLevel() const { return std::thread::hardware_concurrency(); }
         static Threadpool& default() noexcept;
         static std::unique_ptr<Threadpool> create();
     };
