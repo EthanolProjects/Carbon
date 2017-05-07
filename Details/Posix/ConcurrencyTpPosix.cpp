@@ -5,21 +5,8 @@
 
 #ifdef CARBON_TARGET_POSIX
 namespace CarbonPosix {
-    class CARBON_API Threadpool final {
-    public:
-        Threadpool();
-        Threadpool(size_t num);
-        ~Threadpool();
-        void submit(Task* task);
-        size_t size() const;
-    private:
-        class TaskQueue;
-        class ThreadGroup;
-        size_t mSize;
-        std::unique_ptr<TaskQueue> mSource;
-        std::unique_ptr<ThreadGroup> mThreads;
-    };
-    class Threadpool::TaskQueue {
+    using namespace Carbon;
+    class TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Task*>;
         void submit(Task* task) {
@@ -61,7 +48,7 @@ namespace CarbonPosix {
         std::mutex mMutex;
     };
 
-    class Threadpool::ThreadGroup {
+    class ThreadGroup {
     public:
         ThreadGroup(TaskQueue* source, size_t count) {
             mFlag = true;
@@ -98,25 +85,30 @@ namespace CarbonPosix {
         std::vector<std::thread> mThreads;
     };
 
-    Threadpool::Threadpool() : Threadpool(std::thread::hardware_concurrency()) {}
+    class TpPosix final : public Threadpool {
+    public:
+        TpPosix() : TpPosix(std::thread::hardware_concurrency()) {}
+        TpPosix(size_t num) : mSize(num) {
+            mSource = std::make_unique<TaskQueue>();
+            mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
+        }
+        ~TpPosix() { mThreads.reset(); }
+        void submit(Task* task) override {
+            mSource->submit(task);
+            mThreads->wakeAllOnDemand();
+        }
+        size_t getConcurrencyLevel() override { return mSize; }
+    private:
+        size_t mSize;
+        std::unique_ptr<TaskQueue> mSource;
+        std::unique_ptr<ThreadGroup> mThreads;
+    };
 
-    Threadpool::Threadpool(size_t num) : mSize(num) {
-        mSource = std::make_unique<TaskQueue>();
-        mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
-    }
+}
 
-    void Threadpool::submit(Task* task) {
-        mSource->submit(task);
-        mThreads->wakeAllOnDemand();
-    }
-
-    size_t Threadpool::size() const {
-        return mSize;
-    }
-
-    Threadpool::~Threadpool() {
-        mThreads.reset();
-    }
-
+namespace Carbon {
+    using namespace CarbonPosix;
+    Threadpool& Threadpool::default() noexcept { static TpPosix pool; return pool; }
+    std::unique_ptr<Threadpool> Threadpool::create() { return std::make_unique<TpPosix>(); }
 }
 #endif
