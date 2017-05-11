@@ -18,12 +18,18 @@
     <Filter Include="Source\Posix">
       <UniqueIdentifier>{d90c2ad2-bcd6-4f7a-822c-bf96d2f4978b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\DynamicLibrary">
+      <UniqueIdentifier>{92cb74ed-4f1f-4060-8691-0d7db9c3d743}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Log">
+      <UniqueIdentifier>{b09d93db-1dae-4b1b-b96f-3a262d1ce700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\BinaryStream">
+      <UniqueIdentifier>{07af86be-e0a2-45d0-bb81-d9fbef72b441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Config.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Log.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Math.hpp">
@@ -35,20 +41,23 @@
     <ClInclude Include="..\..\Carbon\Carbon.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency\TaskTypes.h">
-      <Filter>Headers\Concurrency</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency\Thread.h">
-      <Filter>Headers\Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Details\Windows\CarbonTargetWindows.hpp">
       <Filter>Source\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency.hpp">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp">
-      <Filter>Headers</Filter>
+      <Filter>Headers\DynamicLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Log.hpp">
+      <Filter>Headers\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\IOBS.hpp">
+      <Filter>Headers\BinaryStream</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

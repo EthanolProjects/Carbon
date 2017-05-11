@@ -21,10 +21,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Carbon.hpp" />
     <ClInclude Include="..\..\Carbon\Concurrency.hpp" />
-    <ClInclude Include="..\..\Carbon\Concurrency\TaskTypes.h" />
-    <ClInclude Include="..\..\Carbon\Concurrency\Thread.h" />
+    <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp" />
     <ClInclude Include="..\..\Carbon\Config.hpp" />
     <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp" />
+    <ClInclude Include="..\..\Carbon\IOBS.hpp" />
     <ClInclude Include="..\..\Carbon\Log.hpp" />
     <ClInclude Include="..\..\Carbon\Math.hpp" />
     <ClInclude Include="..\..\Carbon\Mpl.hpp" />
