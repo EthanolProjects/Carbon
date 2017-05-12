@@ -8,17 +8,11 @@ namespace CarbonWindows {
     public:
         TpWindowsBase() noexcept : TpWindowsBase(nullptr) {}
         TpWindowsBase(PTP_CALLBACK_ENVIRON pEnv) noexcept : mPEnv(pEnv) {}
-        void submit(Task* task) override {
+        void submit(Work* task) override {
             SubmitThreadpoolWork(CreateThreadpoolWork([](PTP_CALLBACK_INSTANCE, PVOID taskIn, PTP_WORK work) {
-                auto task = reinterpret_cast<Task*>(taskIn);
-                if (task->reusable()) {
-                    SubmitThreadpoolWork(work);
-                    task->execute();
-                }
-                else {
-                    task->execute();
-                    CloseThreadpoolWork(work);
-                }
+                auto task = reinterpret_cast<Work*>(taskIn);
+                task->execute();
+                CloseThreadpoolWork(work);
             }, task, mPEnv));
         }
     private:

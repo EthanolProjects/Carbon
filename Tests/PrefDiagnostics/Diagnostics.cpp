@@ -1,16 +1,16 @@
 #include "../../Carbon/Concurrency.hpp"
+#include <iostream>
 namespace CarbonPrefDiagnostics {
     constexpr size_t maxNum = 100000000;
     void concurrencyTp() {
-        std::vector<int> result(maxNum);
-        auto pool = Carbon::Threadpool::create();
-        auto func = [&](size_t i) { result[i] = []() { return rand(); }(); };
-        auto future = Carbon::AsyncGroup(*pool, { 0,maxNum }, func);
-        future->wait();
+        std::atomic_int result;
+        Carbon::asyncForIntegerRange(Carbon::Threadpool::default(), 
+            [&](int) { result = rand(); }, 0, maxNum).get();
     }
 }
 
 int main() {
     using namespace CarbonPrefDiagnostics;
     concurrencyTp();
+    system("pause");
 }

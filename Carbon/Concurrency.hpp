@@ -7,65 +7,18 @@
 #include <future>
 
 namespace Carbon {
-    class CARBON_API Task {
+    class CARBON_API Work {
     public:
         virtual void execute() = 0;
-        virtual bool reusable() { return false; }
     };
 
     class CARBON_API Threadpool {
     public:
         virtual ~Threadpool() {}
-        virtual void submit(Task* task) = 0;
+        virtual void submit(Work* task) = 0;
         virtual size_t getConcurrencyLevel() const { return std::thread::hardware_concurrency(); }
         static Threadpool& default() noexcept;
         static std::unique_ptr<Threadpool> create();
-    };
-
-    namespace TppDetail {
-        template<typename T> class SubTask;
-    }
-
-    class CARBON_API TaskGroupFuture final {
-    public:
-        TaskGroupFuture(size_t size);
-        ~TaskGroupFuture();
-        void wait() const;
-        template<class Clock, class Duration>
-        bool wait_until(const std::chrono::time_point<Clock, Duration>& time) const {
-            while (mLast) {
-                std::this_thread::yield();
-                if (std::chrono::system_clock::now() >= time)
-                    return false;
-            }
-            return true;
-        }
-        template<class Rep, class Period>
-        bool wait_for(const std::chrono::duration<Rep, Period>& time) const {
-            return wait_until(std::chrono::system_clock::now() + time);
-        }
-        void catchExceptions(const std::function<void(std::function<void()>)>& catchFunc);
-    private:
-        template<typename T>
-        friend class TppDetail::SubTask;
-        size_t finish(size_t size);
-        size_t setException(std::exception_ptr exc, size_t size);
-        std::atomic_size_t mLast;
-        std::vector<std::exception_ptr> mExceptions;
-        std::mutex mMutex;
-    };
-
-    class CARBON_API IntegerRange final {
-    private:
-        std::atomic_size_t mBegin;
-        const size_t mEnd;
-    public:
-        IntegerRange(size_t begin, size_t end);
-        IntegerRange(const IntegerRange& rhs);
-        IntegerRange cut(size_t atomic);
-        size_t size() const;
-        void forEach(const std::function<void(size_t)>& callable) const;
-        void forEach(const std::function<void(IntegerRange)>& callable) const;
     };
 
     namespace TppDetail {
@@ -83,8 +36,9 @@ namespace Carbon {
                 promise.set_value();
             }
         };
+        
         template <class Callable, class ...Ts>
-        class TaskFunc :public Task {
+        class TaskFunc :public Work {
             using ReturnType =
                 std::result_of_t<std::decay_t<Callable>(std::decay_t<Ts>...)>;
         public:
@@ -95,10 +49,7 @@ namespace Carbon {
                     ApplyImpl<ReturnType, Callable, Ts...>::doAndSet(mPromise, mCallable, mTuple);
                 }
                 catch (...) {
-                    try {
-                        mPromise.set_exception(std::current_exception());
-                    }
-                    catch (...) {}
+                    mPromise.set_exception(std::current_exception());
                 }
                 delete this;
             }
@@ -109,55 +60,48 @@ namespace Carbon {
             std::promise<ReturnType> mPromise;
         };
 
-        template<typename Callable>
-        class SubTask :public Task {
+        template<class Callable>
+        class WorkIntegerRange: public Work {
         public:
-            SubTask(const Callable& call, IntegerRange range, TaskGroupFuture& future, size_t atomic)
-                :mCallable(call), mRange(range), mFuture(future), mAtomic(atomic), mLast(range.size() / atomic + static_cast<bool>(range.size() % atomic)) {}
-            bool reusable() override {
-                return --mLast;
-            }
+            WorkIntegerRange(Callable call, int begin, int end, int step) :
+                mCallable(std::forward<Callable>(call)), mRange(begin, end), mCurrent{ begin } {}
             void execute() override {
-                size_t last;
-                auto task = mRange.cut(mAtomic);
+                ++mCount;
                 try {
-                    task.forEach(mCallable);
-                    last = mFuture.finish(task.size());
+                    int cutCurrent;
+                    for (; (cutCurrent = mCurrent++) < mRange.second;)
+                        mCallable(cutCurrent);
                 }
                 catch (...) {
-                    try {
-                        last = mFuture.setException(std::current_exception(), task.size());
-                    }
-                    catch (...) {}
+                    mPromise.set_exception(std::current_exception());
                 }
-                if (!last)delete this;
+                if (--mCount == 0) {
+                    mPromise.set_value();
+                    delete this;
+                }
             }
+            auto getFuture() { return mPromise.get_future(); }
         private:
-            IntegerRange mRange;
-            size_t mAtomic;
-            size_t mLast;
-            TaskGroupFuture& mFuture;
             Callable mCallable;
+            std::pair<int, int> mRange;
+            std::promise<void> mPromise;
+            std::atomic_int mCurrent, mCount{ 0 };
         };
-
     }
 
     template<class Callable, class ...Ts>
-    inline auto Async(Threadpool& pool, const Callable& callable, Ts&&... args) {
+    inline auto async(Threadpool& pool, const Callable& callable, Ts&&... args) {
         auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
         pool.submit(newTask);
         return fut;
     }
 
-    template< typename Callable>
-    inline auto AsyncGroup(Threadpool& pool, IntegerRange range, const Callable& closure, size_t atomic = 0) {
-        auto fut = std::make_unique<TaskGroupFuture>(range.size());
-        if (atomic == 0)
-            atomic = range.size() / pool.getConcurrencyLevel() + 1;
-        auto newTask = new TppDetail::SubTask<Callable>(closure, range, *fut, atomic);
-        pool.submit(newTask);
-        return std::move(fut);
+    template <class Callable>
+    inline auto asyncForIntegerRange(Threadpool& pool, const Callable& callable, int begin, int end, int step = 1) {
+        auto newTask = new TppDetail::WorkIntegerRange<Callable>(callable, begin, end, step);
+        auto fut = newTask->getFuture();
+        for (int i = 0; i < pool.getConcurrencyLevel(); ++i) pool.submit(newTask);
+        return fut;
     }
-
 }

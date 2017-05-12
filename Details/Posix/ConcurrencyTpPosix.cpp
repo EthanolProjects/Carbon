@@ -8,8 +8,8 @@ namespace CarbonPosix {
     using namespace Carbon;
     class TaskQueue {
     public:
-        using Queue_t = ArrayLockFreeQueue<Task*>;
-        void submit(Task* task) {
+        using Queue_t = ArrayLockFreeQueue<Work*>;
+        void submit(Work* task) {
             while (true)
                 if (mBack->push(task)) return;
                 else {
@@ -20,8 +20,8 @@ namespace CarbonPosix {
                     }
                 }
         }
-        Task* getTask() {
-            Task* ret = nullptr;
+        Work* getTask() {
+            Work* ret = nullptr;
             auto success = mFront->pop(ret);
             if (!success && mFront != mBack) {
                 mMutex.lock();
@@ -30,7 +30,7 @@ namespace CarbonPosix {
                     mQueue.pop();
                     mFront = mQueue.front().get();
                     mMutex.unlock();
-                    Task* ret;
+                    Work* ret;
                     while (queue->pop(ret))submit(ret);
                 }
                 else mMutex.unlock();
@@ -66,7 +66,7 @@ namespace CarbonPosix {
         void wakeAllOnDemand() noexcept { mHolder.notify_all(); }
     private:
         void runThread(TaskQueue* source) noexcept {
-            Task* task = nullptr;
+            Work* task = nullptr;
             size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
@@ -75,7 +75,6 @@ namespace CarbonPosix {
                     mHolder.wait(lock); // Hold the thread
                 }
                 if (!mFlag) break;
-                if (task->reusable())source->submit(task);
                 task->execute();
             }
         }
@@ -93,7 +92,7 @@ namespace CarbonPosix {
             mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
         }
         ~TpPosix() { mThreads.reset(); }
-        void submit(Task* task) override {
+        void submit(Work* task) override {
             mSource->submit(task);
             mThreads->wakeAllOnDemand();
         }

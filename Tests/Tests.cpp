@@ -25,11 +25,11 @@ namespace CarbonTests {
             std::vector<std::future<int>> futs; futs.reserve(testCount);
             std::atomic_size_t count{ 0 };
             for (size_t i = 0; i < testCount; ++i)
-                futs.push_back(Carbon::Async(pool, [&] {
+                futs.push_back(Carbon::async(pool, [&] {
                 ++count;
                 return obj(); }));
             for (auto&& a : futs)
-                a.wait();
+                a.get();
             ASSERT_EQ(testCount, static_cast<size_t>(count));
         }
 
@@ -41,8 +41,7 @@ namespace CarbonTests {
                 ++count;
                 result[i] = obj();
             };
-            auto future = Carbon::AsyncGroup(pool, { 0,testCount }, func, 1024);
-            future->wait();
+            Carbon::asyncForIntegerRange(pool, func, 0, testCount, 1024).get();
             ASSERT_EQ(testCount, static_cast<size_t>(count));
         }
 
@@ -64,45 +63,24 @@ namespace CarbonTests {
 
         static constexpr size_t maxNum = 10000000;
 
-        TEST_METHOD(ThreadPoolExtremalTest) {
-            using namespace std::literals;
-            auto A = Carbon::Threadpool::create();
-            auto B = Carbon::Threadpool::create();
-            using Range = Carbon::IntegerRange;
-            std::vector<int> result(maxNum);
-            auto func1 = [&](size_t i) {result[i] = obj2(); };
-            auto func2 = [&](Range range) {
-                if (rand() > RAND_MAX / 2) {
-                    std::vector<std::future<void>> v; v.reserve(range.size());
-                    range.forEach([&](size_t i) {
-                        v.push_back(Carbon::Async(*B, [&, i] {result[i] = obj2(); }));
-                    });
-                    for (auto&& x : v) x.wait();
-                }
-                else Carbon::AsyncGroup(*B, range, func1)->wait();
-            };
-            Carbon::AsyncGroup(*A, { 0,maxNum }, func2, 128)->wait();
-        }
-
         TEST_METHOD(PerfTestOMP) {
             std::vector<int> result(maxNum);
 #pragma omp parallel for
             for (int i = 0; i < maxNum; ++i)
                 result[i] = obj2();
         }
-        
 
         TEST_METHOD(PerfTestCTP) {
             std::vector<int> result(maxNum);
             auto& pool = Carbon::Threadpool::default();
-            auto func = [&](size_t i) {result[i] = obj2(); };
-            auto future = Carbon::AsyncGroup(pool, { 0,maxNum }, func);
-            future->wait();
+            auto func = [&](size_t i) { result[i] = obj2(); };
+            Carbon::asyncForIntegerRange(pool, func, 0, maxNum).get();
         }       
 
-#undef ETH_TEST_SUITE
         END_TEST_GROUP
+#undef ETH_TEST_SUITE
     }
+
     namespace MathTests {
 #define ETH_TEST_SUITE MathTests
         BEGIN_TEST_GROUP

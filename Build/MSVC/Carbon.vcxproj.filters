@@ -21,11 +21,11 @@
     <Filter Include="Headers\DynamicLibrary">
       <UniqueIdentifier>{92cb74ed-4f1f-4060-8691-0d7db9c3d743}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Log">
-      <UniqueIdentifier>{b09d93db-1dae-4b1b-b96f-3a262d1ce700}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\BinaryStream">
+    <Filter Include="Headers\BinaryIO">
       <UniqueIdentifier>{07af86be-e0a2-45d0-bb81-d9fbef72b441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Maintenance">
+      <UniqueIdentifier>{b09d93db-1dae-4b1b-b96f-3a262d1ce700}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,13 +51,13 @@
       <Filter>Headers\DynamicLibrary</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Log.hpp">
-      <Filter>Headers\Log</Filter>
+      <Filter>Headers\Maintenance</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp">
       <Filter>Headers\Concurrency</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Carbon\IOBS.hpp">
-      <Filter>Headers\BinaryStream</Filter>
+      <Filter>Headers\BinaryIO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

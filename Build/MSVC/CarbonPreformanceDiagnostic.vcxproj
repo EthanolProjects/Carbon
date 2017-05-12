@@ -23,7 +23,7 @@
     <ProjectGuid>{A42EC59F-9D60-4CAC-9976-A19C85C7CDD6}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CarbonPreformanceDiagnostic</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
