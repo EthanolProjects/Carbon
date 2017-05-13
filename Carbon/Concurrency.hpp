@@ -63,20 +63,23 @@ namespace Carbon {
         template<class Callable>
         class WorkIntegerRange: public Work {
         public:
-            WorkIntegerRange(Callable call, int begin, int end, int step) :
-                mCallable(std::forward<Callable>(call)), mRange(begin, end), mCurrent{ begin } {}
+            WorkIntegerRange(Callable call, int spawn, int begin, int end) :
+                mCallable(std::forward<Callable>(call)), mRange(begin, end), mCurrent{ begin }, mCount(spawn) {}
             void execute() override {
-                ++mCount;
                 try {
                     int cutCurrent;
-                    for (; (cutCurrent = mCurrent++) < mRange.second;)
+                    for (; (cutCurrent = mCurrent.fetch_add(1)) < mRange.second;)
                         mCallable(cutCurrent);
                 }
                 catch (...) {
-                    mPromise.set_exception(std::current_exception());
+                    if (!mExpFlag.test_and_set()) {
+                        mCurrent.store(mRange.second); // Break the execution
+                        mPromise.set_exception(std::current_exception());
+                    }
                 }
-                if (--mCount == 0) {
-                    mPromise.set_value();
+                if (mCount.fetch_sub(1) == 1) {
+                    if (!mExpFlag.test_and_set())
+                        mPromise.set_value();
                     delete this;
                 }
             }
@@ -85,7 +88,8 @@ namespace Carbon {
             Callable mCallable;
             std::pair<int, int> mRange;
             std::promise<void> mPromise;
-            std::atomic_int mCurrent, mCount{ 0 };
+            std::atomic_int mCurrent, mCount;
+            std::atomic_flag mExpFlag{ ATOMIC_FLAG_INIT };
         };
     }
 
@@ -98,10 +102,11 @@ namespace Carbon {
     }
 
     template <class Callable>
-    inline auto asyncForIntegerRange(Threadpool& pool, const Callable& callable, int begin, int end, int step = 1) {
-        auto newTask = new TppDetail::WorkIntegerRange<Callable>(callable, begin, end, step);
+    inline auto asyncForIntegerRange(Threadpool& pool, const Callable& callable, int begin, int end) {
+        auto spawn = pool.getConcurrencyLevel();
+        auto newTask = new TppDetail::WorkIntegerRange<Callable>(callable, spawn, begin, end);
         auto fut = newTask->getFuture();
-        for (int i = 0; i < pool.getConcurrencyLevel(); ++i) pool.submit(newTask);
+        for (int i = 0; i < spawn; ++i) pool.submit(newTask);
         return fut;
     }
 }

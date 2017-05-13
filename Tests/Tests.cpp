@@ -41,7 +41,7 @@ namespace CarbonTests {
                 ++count;
                 result[i] = obj();
             };
-            Carbon::asyncForIntegerRange(pool, func, 0, testCount, 1024).get();
+            Carbon::asyncForIntegerRange(pool, func, 0, testCount).get();
             ASSERT_EQ(testCount, static_cast<size_t>(count));
         }
 
