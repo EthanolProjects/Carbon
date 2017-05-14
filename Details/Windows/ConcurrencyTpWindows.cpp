@@ -30,7 +30,7 @@ namespace CarbonWindows {
 
 namespace Carbon {
     using namespace CarbonWindows;
-    Threadpool& Threadpool::default() noexcept { static TpWindowsBase pool; return pool; }
+    Threadpool& Threadpool::getDefault() noexcept { static TpWindowsBase pool; return pool; }
     std::unique_ptr<Threadpool> Threadpool::create() { return std::make_unique<TpWindowsCustom>(); }
 }
 #endif

@@ -67,7 +67,6 @@ namespace CarbonPosix {
     private:
         void runThread(TaskQueue* source) noexcept {
             Work* task = nullptr;
-            size_t sleep = 1;
             while (mFlag) {
                 while (mFlag && !(task = source->getTask())) {
                     // TODO: apply a rotation lock is necessary
@@ -107,7 +106,7 @@ namespace CarbonPosix {
 
 namespace Carbon {
     using namespace CarbonPosix;
-    Threadpool& Threadpool::default() noexcept { static TpPosix pool; return pool; }
+    Threadpool& Threadpool::getDefault() noexcept { static TpPosix pool; return pool; }
     std::unique_ptr<Threadpool> Threadpool::create() { return std::make_unique<TpPosix>(); }
 }
 #endif

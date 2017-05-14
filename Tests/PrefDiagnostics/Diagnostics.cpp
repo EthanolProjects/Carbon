@@ -4,7 +4,7 @@ namespace CarbonPrefDiagnostics {
     constexpr size_t maxNum = 10000;
     void concurrencyTp() {
         std::atomic_int result;
-        Carbon::asyncForIntegerRange(Carbon::Threadpool::default(), 
+        Carbon::asyncForIntegerRange(Carbon::Threadpool::getDefault(), 
             [&](int) { result = rand(); }, 0, maxNum).get();
     }
 

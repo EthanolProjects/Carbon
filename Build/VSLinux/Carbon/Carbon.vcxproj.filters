@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{20f96ee0-6686-4cf8-ab51-4fc30dc3a54c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources">
+      <UniqueIdentifier>{246f9c86-1e39-4dcb-871e-c942fb2fb0d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\Posix">
+      <UniqueIdentifier>{ab54ddef-0383-4568-879c-9e2cb61a0e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\ThirdParty">
+      <UniqueIdentifier>{057e3e12-a3d5-4e5d-bb0b-55ce0e9cd92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sources\ThirdParty\LockFree">
+      <UniqueIdentifier>{6875ba97-2d26-4b4b-a342-2e4bde6930ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Concurrency">
+      <UniqueIdentifier>{1f574c8a-9b70-4497-9462-8d7e28fa29d4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Carbon\Carbon.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Config.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\DynamicLibrary.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Format.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\IOBS.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Log.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Math.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Mpl.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Details\ThirdParty\LockFree\Queue.hpp">
+      <Filter>Sources\ThirdParty\LockFree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Carbon\Concurrency.hpp">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UNIX\UnitTestUNIX.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Details\ConcurrencyTpCommon.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Details\Log.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Details\Posix\ConcurrencyTpPosix.cpp">
+      <Filter>Sources\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Details\Posix\DynamicLibraryCPosix.cpp">
+      <Filter>Sources\Posix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Tests\Tests.cpp" />
+  </ItemGroup>
+</Project>
