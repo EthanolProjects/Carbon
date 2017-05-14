@@ -9,10 +9,8 @@ namespace CarbonWindows {
         TpWindowsBase() noexcept : TpWindowsBase(nullptr) {}
         TpWindowsBase(PTP_CALLBACK_ENVIRON pEnv) noexcept : mPEnv(pEnv) {}
         void submit(Work* task) override {
-            SubmitThreadpoolWork(CreateThreadpoolWork([](PTP_CALLBACK_INSTANCE, PVOID taskIn, PTP_WORK work) {
-                auto task = reinterpret_cast<Work*>(taskIn);
-                task->execute();
-                CloseThreadpoolWork(work);
+            while(!TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID taskIn) {
+                reinterpret_cast<Work*>(taskIn)->execute();
             }, task, mPEnv));
         }
     private:
