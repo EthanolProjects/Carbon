@@ -9,7 +9,7 @@ namespace CarbonPosix {
     class TaskQueue {
     public:
         using Queue_t = ArrayLockFreeQueue<Work*>;
-        void submit(Work* task) {
+        void submitOnce(Work* task) {
             while (true)
                 if (mBack->push(task)) return;
                 else {
@@ -31,7 +31,7 @@ namespace CarbonPosix {
                     mFront = mQueue.front().get();
                     mMutex.unlock();
                     Work* ret;
-                    while (queue->pop(ret))submit(ret);
+                    while (queue->pop(ret))submitOnce(ret);
                 }
                 else mMutex.unlock();
             }
@@ -74,7 +74,7 @@ namespace CarbonPosix {
                     mHolder.wait(lock); // Hold the thread
                 }
                 if (!mFlag) break;
-                task->execute();
+                task->main();
             }
         }
         std::mutex mSleep;
@@ -91,8 +91,8 @@ namespace CarbonPosix {
             mThreads = std::make_unique<ThreadGroup>(mSource.get(), num);
         }
         ~TpPosix() { mThreads.reset(); }
-        void submit(Work* task) override {
-            mSource->submit(task);
+        void submitOnce(Work* task) override {
+            mSource->submitOnce(task);
             mThreads->wakeAllOnDemand();
         }
         size_t getConcurrencyLevel() const override { return mSize; }

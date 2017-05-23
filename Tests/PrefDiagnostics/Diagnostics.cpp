@@ -9,12 +9,13 @@ namespace CarbonPrefDiagnostics {
     }
 
     void exceptionTest() {
-        for (int i = 0; i < 1000; ++i){
+        for (int i = 0; i < 1000000; ++i){
             try {
                 concurrencyTp();
             }
             catch (std::exception& e) {
                 std::cout << e.what() << std::endl;
+                system("pause");
             }
         }
     }
@@ -24,5 +25,4 @@ namespace CarbonPrefDiagnostics {
 int main() {
     using namespace CarbonPrefDiagnostics;
     exceptionTest();
-    system("pause");
 }

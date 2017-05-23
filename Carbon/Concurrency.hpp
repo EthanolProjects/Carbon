@@ -1,22 +1,20 @@
 #pragma once
 #include "Config.hpp"
 #include "Mpl.hpp"
-#include <thread>
 #include <memory>
-#include <vector>
 #include <future>
 
 namespace Carbon {
     class CARBON_API Work {
     public:
-        virtual void execute() = 0;
+        virtual void main() noexcept = 0;
     };
 
     class CARBON_API Threadpool {
     public:
         virtual ~Threadpool() {}
-        virtual void submit(Work* task) = 0;
-        virtual size_t getConcurrencyLevel() const { return std::thread::hardware_concurrency(); }
+        virtual void submitOnce(Work* task) = 0;
+        virtual size_t getConcurrencyLevel() const;
         static Threadpool& getDefault() noexcept;
         static std::unique_ptr<Threadpool> create();
     };
@@ -44,7 +42,7 @@ namespace Carbon {
         public:
             TaskFunc(Callable call, Ts&&... args) :
                 mCallable(std::forward<Callable>(call)), mTuple(std::forward_as_tuple(args...)) {}
-            void execute() override {
+            void main() noexcept override {
                 try {
                     ApplyImpl<ReturnType, Callable, Ts...>::doAndSet(mPromise, mCallable, mTuple);
                 }
@@ -65,7 +63,7 @@ namespace Carbon {
         public:
             WorkIntegerRange(Callable call, int spawn, int begin, int end) :
                 mCallable(std::forward<Callable>(call)), mRange(begin, end), mCurrent{ begin }, mCount(spawn) {}
-            void execute() override {
+            void main() noexcept override {
                 try {
                     int cutCurrent;
                     for (; (cutCurrent = mCurrent.fetch_add(1)) < mRange.second;)
@@ -97,7 +95,7 @@ namespace Carbon {
     inline auto async(Threadpool& pool, const Callable& callable, Ts&&... args) {
         auto newTask = new TppDetail::TaskFunc<Callable, Ts...>(callable, std::forward<Ts>(args)...);
         auto fut = newTask->getFuture();
-        pool.submit(newTask);
+        pool.submitOnce(newTask);
         return fut;
     }
 
@@ -106,7 +104,7 @@ namespace Carbon {
         auto spawn = pool.getConcurrencyLevel();
         auto newTask = new TppDetail::WorkIntegerRange<Callable>(callable, spawn, begin, end);
         auto fut = newTask->getFuture();
-        for (int i = 0; i < spawn; ++i) pool.submit(newTask);
+        for (int i = 0; i < spawn; ++i) pool.submitOnce(newTask);
         return fut;
     }
 }

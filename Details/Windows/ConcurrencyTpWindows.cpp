@@ -4,31 +4,35 @@
 #ifdef CARBON_TARGET_WINDOWS
 namespace CarbonWindows {
     using namespace Carbon;
-    class TpWindowsBase : public Threadpool {
+    class TpWindows : public Threadpool {
     public:
-        TpWindowsBase() noexcept : TpWindowsBase(nullptr) {}
-        TpWindowsBase(PTP_CALLBACK_ENVIRON pEnv) noexcept : mPEnv(pEnv) {}
-        void submit(Work* task) override {
-            while(!TrySubmitThreadpoolCallback([](PTP_CALLBACK_INSTANCE, PVOID taskIn) {
-                reinterpret_cast<Work*>(taskIn)->execute();
-            }, task, mPEnv));
+        TpWindows() noexcept{
+            mPool = CreateThreadpool(nullptr);
+            InitializeThreadpoolEnvironment(&mEnv);
+            SetThreadpoolCallbackPool(&mEnv, mPool);
+            //SetThreadpoolCallbackCleanupGroup(&mEnv, mCleanup, nullptr);
+        }
+        ~TpWindows() {
+            //CloseThreadpoolCleanupGroup(mCleanup);
+            DestroyThreadpoolEnvironment(&mEnv);
+            CloseThreadpool(mPool);
+        }
+        void submitOnce(Work* task) override {
+            while(!TrySubmitThreadpoolCallback(simpleThreadpoolCallback, task, &mEnv));
         }
     private:
-        PTP_CALLBACK_ENVIRON mPEnv;
-    };
-
-    class TpWindowsCustom final : public TpWindowsBase {
-    public:
-        TpWindowsCustom() :TpWindowsBase(&mEnv) { InitializeThreadpoolEnvironment(&mEnv); }
-        ~TpWindowsCustom() { DestroyThreadpoolEnvironment(&mEnv); }
-    private:
+        PTP_POOL mPool;
         TP_CALLBACK_ENVIRON mEnv;
+        PTP_CLEANUP_GROUP mCleanup;
+        static void CALLBACK simpleThreadpoolCallback(PTP_CALLBACK_INSTANCE, PVOID taskIn) {
+            reinterpret_cast<Work*>(taskIn)->main();
+        }
     };
 }
 
 namespace Carbon {
     using namespace CarbonWindows;
-    Threadpool& Threadpool::getDefault() noexcept { static TpWindowsBase pool; return pool; }
-    std::unique_ptr<Threadpool> Threadpool::create() { return std::make_unique<TpWindowsCustom>(); }
+    Threadpool& Threadpool::getDefault() noexcept { static TpWindows pool; return pool; }
+    std::unique_ptr<Threadpool> Threadpool::create() { return std::make_unique<TpWindows>(); }
 }
 #endif
