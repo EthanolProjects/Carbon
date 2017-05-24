@@ -27,14 +27,14 @@
     <Filter Include="Headers\Maintenance">
       <UniqueIdentifier>{b09d93db-1dae-4b1b-b96f-3a262d1ce700}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\Config">
+      <UniqueIdentifier>{369f9331-787f-4ffb-a802-4a3c43543cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Math">
+      <UniqueIdentifier>{496847b0-3132-49ed-8a45-d111100189d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Carbon\Config.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Math.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Carbon\Mpl.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -56,8 +56,20 @@
     <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp">
       <Filter>Headers\Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\IOBS.hpp">
+    <ClInclude Include="..\..\Carbon\Config\ConfigPlatform.hpp">
+      <Filter>Headers\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Config.hpp">
+      <Filter>Headers\Config</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency\ParallelUtilities.hpp">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\BinaryIOStreamBase.hpp">
       <Filter>Headers\BinaryIO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Carbon\Math.hpp">
+      <Filter>Headers\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

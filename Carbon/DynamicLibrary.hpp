@@ -2,6 +2,7 @@
 #include "Config.hpp"
 #include <cstdint>
 #include <memory>
+
 namespace Carbon {
     class CARBON_API DynamicLibrary {
     public:

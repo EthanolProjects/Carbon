@@ -14,6 +14,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning(disable: 4251)
+#define _ENABLE_ATOMIC_ALIGNMENT_FIX
 #endif
 
 #ifdef CARBON_EXPORTS
@@ -21,3 +22,5 @@
 #else
 #define CARBON_API IMPORT
 #endif
+
+#include "Config/ConfigPlatform.hpp"
