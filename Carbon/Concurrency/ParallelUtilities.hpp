@@ -75,6 +75,19 @@ namespace Carbon {
             std::atomic_int mCurrent, mCount;
             std::atomic_flag mExpFlag{ ATOMIC_FLAG_INIT };
         };
+
+    }
+
+    // async For-Each
+
+    // Launch Policy Tags
+    namespace LaunchPolicy {
+        class Sequenced {};
+        class UnSequenced {};
+    }
+
+    namespace ForEachInternals {
+
     }
 
     template<class Callable, class ...Ts>

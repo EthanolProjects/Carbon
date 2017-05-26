@@ -1,4 +1,5 @@
 #pragma once
+#include "Config.hpp"
 namespace Carbon {
     using Byte = unsigned char;
 
@@ -7,6 +8,7 @@ namespace Carbon {
         virtual ~IBStream() {}
         virtual void put(Byte byte) = 0;
         virtual void write(const Byte* src, unsigned int size) = 0;
+        virtual void flush() = 0;
     };
 
     class OBStream {
@@ -14,21 +16,32 @@ namespace Carbon {
         virtual ~OBStream() {}
         virtual Byte get() const = 0;
         virtual void read(Byte* src, unsigned int size) = 0;
+        virtual void flush() = 0;
     };
-
-    template <class T>
-    IBStream& operator << (IBStream& stream, const T& rhs) {
-        stream.write(&rhs, sizeof(T));
-        return stream;
-    }
-
-    template <class T>
-    IBStream& operator >> (IBStream& stream, T& rhs) {
-        stream.read(&rhs, sizeof(T));
-        return stream;
-    }
 
     class IOBStream : public IBStream, public OBStream {
 
     };
+    
+    CARBON_API IBStream& operator << (IBStream&, char);
+    CARBON_API IBStream& operator << (IBStream&, short);
+    CARBON_API IBStream& operator << (IBStream&, int);
+    CARBON_API IBStream& operator << (IBStream&, long);
+    CARBON_API IBStream& operator << (IBStream&, long long);
+    CARBON_API IBStream& operator << (IBStream&, unsigned char);
+    CARBON_API IBStream& operator << (IBStream&, unsigned short);
+    CARBON_API IBStream& operator << (IBStream&, unsigned int);
+    CARBON_API IBStream& operator << (IBStream&, unsigned long);
+    CARBON_API IBStream& operator << (IBStream&, unsigned long long);
+    CARBON_API IBStream& operator >> (IBStream&, char&);
+    CARBON_API IBStream& operator >> (IBStream&, short&);
+    CARBON_API IBStream& operator >> (IBStream&, int&);
+    CARBON_API IBStream& operator >> (IBStream&, long&);
+    CARBON_API IBStream& operator >> (IBStream&, long long&);
+    CARBON_API IBStream& operator >> (IBStream&, unsigned char&);
+    CARBON_API IBStream& operator >> (IBStream&, unsigned short&);
+    CARBON_API IBStream& operator >> (IBStream&, unsigned int&);
+    CARBON_API IBStream& operator >> (IBStream&, unsigned long&);
+    CARBON_API IBStream& operator >> (IBStream&, unsigned long long&);
+
 }

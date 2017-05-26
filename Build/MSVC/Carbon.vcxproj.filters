@@ -71,13 +71,13 @@
     <ClInclude Include="..\..\Carbon\Math.hpp">
       <Filter>Headers\Math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Carbon\Format.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Details\Log.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Carbon\Format.h">
-      <Filter>Headers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Details\Windows\ConcurrencyTpWindows.cpp">
       <Filter>Source\Windows</Filter>
@@ -93,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Details\Windows\DynamicLibraryCWindows.cpp">
       <Filter>Source\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\BinaryIO\BinaryIOStreamBase.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

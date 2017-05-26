@@ -31,11 +31,12 @@ namespace Carbon {
         LogHub() {}
         template <class HostT, class ...Ts>
         void addLogger(Ts&&... args) { mHosts.push_back(std::make_unique<HostT>(std::forward<Ts>(args)...)); }
-        std::vector<std::unique_ptr<Logger>> mHosts;
         void recordLog(const char* func, const char* file, std::int32_t line, std::int32_t sev, const char* discription) override {
             for (auto&& host : mHosts)
                 host->recordLog(func, file, line, sev, discription);
         }
+    private:
+        std::vector<std::unique_ptr<Logger>> mHosts;
     };
 
 #define CARBON_LOG_SEV(logger, sev) logger(__func__  , __FILE__, __LINE__, sev)
