@@ -74,6 +74,9 @@
     <ClInclude Include="..\..\Carbon\Format.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Carbon\Concurrency\LightFuture.hpp">
+      <Filter>Headers\Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Details\Log.cpp">
@@ -95,6 +98,9 @@
       <Filter>Source\Windows</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Details\BinaryIO\BinaryIOStreamBase.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Details\Concurrency\LightFuture.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

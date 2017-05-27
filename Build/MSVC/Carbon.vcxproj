@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Carbon\Carbon.hpp" />
     <ClInclude Include="..\..\Carbon\Concurrency.hpp" />
+    <ClInclude Include="..\..\Carbon\Concurrency\LightFuture.hpp" />
     <ClInclude Include="..\..\Carbon\Concurrency\ParallelUtilities.hpp" />
     <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp" />
     <ClInclude Include="..\..\Carbon\Config.hpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="..\..\Carbon\Format.h" />
     <ClCompile Include="..\..\Details\BinaryIO\BinaryIOStreamBase.cpp" />
     <ClCompile Include="..\..\Details\ConcurrencyTpCommon.cpp" />
+    <ClCompile Include="..\..\Details\Concurrency\LightFuture.cpp" />
     <ClCompile Include="..\..\Details\Log.cpp" />
     <ClCompile Include="..\..\Details\Posix\ConcurrencyTpPosix.cpp" />
     <ClCompile Include="..\..\Details\Posix\DynamicLibraryCPosix.cpp" />
