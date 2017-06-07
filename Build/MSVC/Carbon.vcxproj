@@ -19,30 +19,27 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Carbon\Carbon.hpp" />
-    <ClInclude Include="..\..\Carbon\Concurrency.hpp" />
-    <ClInclude Include="..\..\Carbon\Concurrency\LightFuture.hpp" />
-    <ClInclude Include="..\..\Carbon\Concurrency\ParallelUtilities.hpp" />
-    <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp" />
-    <ClInclude Include="..\..\Carbon\Config.hpp" />
-    <ClInclude Include="..\..\Carbon\Config\ConfigPlatform.hpp" />
-    <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp" />
-    <ClInclude Include="..\..\Carbon\BinaryIOStreamBase.hpp" />
-    <ClInclude Include="..\..\Carbon\Log.hpp" />
-    <ClInclude Include="..\..\Carbon\Math.hpp" />
-    <ClInclude Include="..\..\Carbon\Mpl.hpp" />
-    <ClInclude Include="..\..\Details\Windows\CarbonTargetWindows.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\Concurrency.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\LightFuture.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\ParallelUtilities.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\Threadpool.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Config\Config.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Config\ConfigCompilerSlang.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Config\ConfigPlatform.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\Math\Math.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\BinaryIOStreamBase.hpp" />
+    <ClInclude Include="..\..\Libraries\Carbon\Concurrency\ThirdParty\LockFree\Queue.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Carbon\Format.h" />
-    <ClCompile Include="..\..\Details\BinaryIO\BinaryIOStreamBase.cpp" />
-    <ClCompile Include="..\..\Details\ConcurrencyTpCommon.cpp" />
-    <ClCompile Include="..\..\Details\Concurrency\LightFuture.cpp" />
-    <ClCompile Include="..\..\Details\Log.cpp" />
-    <ClCompile Include="..\..\Details\Posix\ConcurrencyTpPosix.cpp" />
-    <ClCompile Include="..\..\Details\Posix\DynamicLibraryCPosix.cpp" />
-    <ClCompile Include="..\..\Details\Windows\ConcurrencyTpWindows.cpp" />
-    <ClCompile Include="..\..\Details\Windows\DynamicLibraryCWindows.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpCommon.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpPosix.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpWindows.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\LightFuture.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -98,24 +95,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Carbon/</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Include/</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Library\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Carbon/</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Include/</IncludePath>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Library\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Carbon/</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Include/</IncludePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Library\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Carbon/</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)../../Include/</IncludePath>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\Library\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

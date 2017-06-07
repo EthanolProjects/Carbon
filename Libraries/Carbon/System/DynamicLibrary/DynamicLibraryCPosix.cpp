@@ -1,4 +1,4 @@
-#include "DynamicLibrary.hpp"
+#include "Carbon/System/DynamicLibrary/DynamicLibrary.hpp"
 #include <stdexcept>
 #ifdef CARBON_TARGET_POSIX
 #include <dlfcn.h>

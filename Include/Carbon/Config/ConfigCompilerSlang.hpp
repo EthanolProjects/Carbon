@@ -22,5 +22,3 @@
 #else
 #define CARBON_API IMPORT
 #endif
-
-#include "Config/ConfigPlatform.hpp"

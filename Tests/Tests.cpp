@@ -1,7 +1,6 @@
 #include UNITTESTINC
-#include "Concurrency.hpp"
-#include "Math.hpp"
-#include "Log.hpp"
+#include "Carbon/Concurrency/Concurrency.hpp"
+#include "Carbon/Math/Math.hpp"
 #include <vector>
 #include <future>
 

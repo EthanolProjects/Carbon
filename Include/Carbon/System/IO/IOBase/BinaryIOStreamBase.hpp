@@ -1,5 +1,5 @@
 #pragma once
-#include "Config.hpp"
+#include "Carbon/Config/Config.hpp"
 namespace Carbon {
     using Byte = unsigned char;
 

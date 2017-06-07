@@ -1,4 +1,4 @@
-#include "BinaryIOStreamBase.hpp"
+#include "Carbon/System/IO/IOBase/BinaryIOStreamBase.hpp"
 
 namespace Carbon {
 #define CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(type) IBStream & operator<<(IBStream &in, type var) {\

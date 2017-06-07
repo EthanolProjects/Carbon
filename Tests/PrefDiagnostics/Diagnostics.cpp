@@ -1,4 +1,4 @@
-#include "../../Carbon/Concurrency.hpp"
+#include "Carbon/COncurrency/Concurrency.hpp"
 #include <iostream>
 namespace CarbonPrefDiagnostics {
     constexpr size_t maxNum = 10000;

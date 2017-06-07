@@ -1,5 +1,5 @@
-#include "Concurrency.hpp"
-#include "CarbonTargetWindows.hpp"
+#include "Carbon/Concurrency/Threadpool.hpp"
+#include "../Targets/CarbonTargetWindows.hpp"
 
 #ifdef CARBON_TARGET_WINDOWS
 namespace CarbonWindows {

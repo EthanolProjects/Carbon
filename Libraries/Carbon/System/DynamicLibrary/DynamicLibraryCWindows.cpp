@@ -1,5 +1,5 @@
-#include "DynamicLibrary.hpp"
-#include "CarbonTargetWindows.hpp"
+#include "Carbon/System/DynamicLibrary/DynamicLibrary.hpp"
+#include "../../Targets/CarbonTargetWindows.hpp"
 #include <stdexcept>
 #ifdef CARBON_TARGET_WINDOWS
 namespace CarbonWindows {

@@ -1,107 +1,144 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Headers">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Sub Libraries">
+      <UniqueIdentifier>{4ddc885e-0628-4bb9-b2a3-0ce8910835dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Sub Libraries\Concurrency">
+      <UniqueIdentifier>{0f556289-f944-4b16-87bf-e8e2d844b7a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Concurrency">
-      <UniqueIdentifier>{7dd1f5b2-236c-4859-877c-0dc7367d91fe}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Concurrency\Headers">
+      <UniqueIdentifier>{05d62ac1-38cd-49d1-9b3a-616b1d621655}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Windows">
-      <UniqueIdentifier>{6b873524-f293-4554-99f0-2ae3bedfbc51}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Concurrency\Source">
+      <UniqueIdentifier>{8307a2e7-5666-4b49-be35-16b24540a441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Posix">
-      <UniqueIdentifier>{d90c2ad2-bcd6-4f7a-822c-bf96d2f4978b}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Math">
+      <UniqueIdentifier>{facf5443-82c3-4633-926e-8833eceb1ea6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\DynamicLibrary">
-      <UniqueIdentifier>{92cb74ed-4f1f-4060-8691-0d7db9c3d743}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Math\Headers">
+      <UniqueIdentifier>{73fdf5a6-4a55-4f91-a7bd-06cdf9d5932f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\BinaryIO">
-      <UniqueIdentifier>{07af86be-e0a2-45d0-bb81-d9fbef72b441}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Math\Source">
+      <UniqueIdentifier>{3cddddf9-3a04-4980-ae17-5ba19ef2702a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Maintenance">
-      <UniqueIdentifier>{b09d93db-1dae-4b1b-b96f-3a262d1ce700}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Meta Programming">
+      <UniqueIdentifier>{9486bd6b-0e3b-4422-8b70-3e93a33c7ed8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Config">
-      <UniqueIdentifier>{369f9331-787f-4ffb-a802-4a3c43543cc5}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Meta Programming\Template Meta Programming">
+      <UniqueIdentifier>{5fc38675-123f-4bef-88de-8534746e71cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Math">
-      <UniqueIdentifier>{496847b0-3132-49ed-8a45-d111100189d1}</UniqueIdentifier>
+    <Filter Include="Sub Libraries\Meta Programming\Macro Meta Programming">
+      <UniqueIdentifier>{e1627032-1d81-458d-95dd-22628c8c74b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System">
+      <UniqueIdentifier>{c8bb258f-65d0-47c9-aed6-75bbff1ca9d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Dynamic Library">
+      <UniqueIdentifier>{cbf6ba65-a242-4e86-8621-f66b77ed8cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Dynamic Library\Headers">
+      <UniqueIdentifier>{18b282ac-4bc5-4b7d-84a6-d864aa00f9d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Dynamic Library\Source">
+      <UniqueIdentifier>{789fc81a-19bf-4e0e-b2eb-fe230b70b624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Processes">
+      <UniqueIdentifier>{12cbdac8-fb58-4bf0-970e-d9c6e7ebec4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Processes\Headers">
+      <UniqueIdentifier>{d866c83c-6bf3-410b-b7af-d1394a5bc289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Processes\Source">
+      <UniqueIdentifier>{9beb8f6e-75da-4dc9-9563-21beb85153c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Filesystem">
+      <UniqueIdentifier>{c6850dc4-298d-408f-aca0-90c2e9649532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Filesystem\Headers">
+      <UniqueIdentifier>{d38b9ce3-1321-452e-9c64-9d1f31316ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\Filesystem\Source">
+      <UniqueIdentifier>{df629976-64a1-4b25-89b9-8650d97eb467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\IO">
+      <UniqueIdentifier>{2107534e-06cd-4d34-b77f-742b9c2efc12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\IO\IOBase">
+      <UniqueIdentifier>{3cbff3b0-222b-4ae2-80b3-0f7fd37088dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\IO\IOBase\Headers">
+      <UniqueIdentifier>{e4c7eaf7-ce73-407f-9f97-5cc91ea1f979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\System\IO\IOBase\Source">
+      <UniqueIdentifier>{ec45e2fb-726e-4263-b257-60f3d0fdaf94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\Config">
+      <UniqueIdentifier>{036bd98d-6db5-4fc2-8860-221cdf2e787d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sub Libraries\Concurrency\ThirdParty">
+      <UniqueIdentifier>{9c363361-433e-4261-9173-6e59ca2bc770}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Carbon\Mpl.hpp">
-      <Filter>Headers</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Config\Config.hpp">
+      <Filter>Sub Libraries\Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Carbon.hpp">
-      <Filter>Headers</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Config\ConfigPlatform.hpp">
+      <Filter>Sub Libraries\Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Details\Windows\CarbonTargetWindows.hpp">
-      <Filter>Source\Windows</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Config\ConfigCompilerSlang.hpp">
+      <Filter>Sub Libraries\Config</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency.hpp">
-      <Filter>Headers\Concurrency</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\Concurrency.hpp">
+      <Filter>Sub Libraries\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\DynamicLibrary.hpp">
-      <Filter>Headers\DynamicLibrary</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\LightFuture.hpp">
+      <Filter>Sub Libraries\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Log.hpp">
-      <Filter>Headers\Maintenance</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\ParallelUtilities.hpp">
+      <Filter>Sub Libraries\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency\Threadpool.hpp">
-      <Filter>Headers\Concurrency</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Concurrency\Threadpool.hpp">
+      <Filter>Sub Libraries\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Config\ConfigPlatform.hpp">
-      <Filter>Headers\Config</Filter>
+    <ClInclude Include="..\..\Libraries\Carbon\Concurrency\ThirdParty\LockFree\Queue.hpp">
+      <Filter>Sub Libraries\Concurrency\ThirdParty</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Config.hpp">
-      <Filter>Headers\Config</Filter>
+    <ClInclude Include="..\..\Include\Carbon\Math\Math.hpp">
+      <Filter>Sub Libraries\Math\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency\ParallelUtilities.hpp">
-      <Filter>Headers\Concurrency</Filter>
+    <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp">
+      <Filter>Sub Libraries\Meta Programming\Template Meta Programming</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\BinaryIOStreamBase.hpp">
-      <Filter>Headers\BinaryIO</Filter>
+    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\BinaryIOStreamBase.hpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Carbon\Math.hpp">
-      <Filter>Headers\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Format.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Carbon\Concurrency\LightFuture.hpp">
-      <Filter>Headers\Concurrency</Filter>
+    <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp">
+      <Filter>Sub Libraries\System\Dynamic Library\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Details\Log.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpPosix.cpp">
+      <Filter>Sub Libraries\Concurrency\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\Windows\ConcurrencyTpWindows.cpp">
-      <Filter>Source\Windows</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpWindows.cpp">
+      <Filter>Sub Libraries\Concurrency\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\ConcurrencyTpCommon.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\LightFuture.cpp">
+      <Filter>Sub Libraries\Concurrency\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\Posix\ConcurrencyTpPosix.cpp">
-      <Filter>Source\Posix</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpCommon.cpp">
+      <Filter>Sub Libraries\Concurrency\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\Posix\DynamicLibraryCPosix.cpp">
-      <Filter>Source\Posix</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\Windows\DynamicLibraryCWindows.cpp">
-      <Filter>Source\Windows</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp">
+      <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Details\BinaryIO\BinaryIOStreamBase.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Details\Concurrency\LightFuture.cpp">
-      <Filter>Source</Filter>
+    <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp">
+      <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
