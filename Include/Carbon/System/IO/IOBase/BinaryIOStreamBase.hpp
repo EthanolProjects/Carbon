@@ -2,46 +2,51 @@
 #include "Carbon/Config/Config.hpp"
 namespace Carbon {
     using Byte = unsigned char;
+    namespace System {
+        namespace IO {
+            struct StreamBase {
+                virtual ~StreamBase() {};
+            };
 
-    class IBStream {
-    public:
-        virtual ~IBStream() {}
-        virtual void put(Byte byte) = 0;
-        virtual void write(const Byte* src, unsigned int size) = 0;
-        virtual void flush() = 0;
-    };
+            struct IInputStream : virtual StreamBase {
+                virtual Byte get() const noexcept = 0;
+                virtual void read(Byte* targetBuffer, long long readLengthByBytes) const noexcept = 0;
+                virtual int readSome(const Byte* targetBuffer, long long readLengthByBytes) const noexcept = 0;
+            };
 
-    class OBStream {
-    public:
-        virtual ~OBStream() {}
-        virtual Byte get() const = 0;
-        virtual void read(Byte* src, unsigned int size) = 0;
-        virtual void flush() = 0;
-    };
+            struct IOutputStream : virtual StreamBase {
+                virtual Byte put() const noexcept = 0;
+                virtual void write(const Byte* targetBuffer, long long writeLengthByBytes) noexcept = 0;
+                virtual int writeSome(const Byte* targetBuffer, long long writeLengthByBytes) noexcept = 0;
+            };
 
-    class IOBStream : public IBStream, public OBStream {
+            struct IIOStream : IInputStream, IOutputStream {};
 
-    };
-    
-    CARBON_API IBStream& operator << (IBStream&, char);
-    CARBON_API IBStream& operator << (IBStream&, short);
-    CARBON_API IBStream& operator << (IBStream&, int);
-    CARBON_API IBStream& operator << (IBStream&, long);
-    CARBON_API IBStream& operator << (IBStream&, long long);
-    CARBON_API IBStream& operator << (IBStream&, unsigned char);
-    CARBON_API IBStream& operator << (IBStream&, unsigned short);
-    CARBON_API IBStream& operator << (IBStream&, unsigned int);
-    CARBON_API IBStream& operator << (IBStream&, unsigned long);
-    CARBON_API IBStream& operator << (IBStream&, unsigned long long);
-    CARBON_API IBStream& operator >> (IBStream&, char&);
-    CARBON_API IBStream& operator >> (IBStream&, short&);
-    CARBON_API IBStream& operator >> (IBStream&, int&);
-    CARBON_API IBStream& operator >> (IBStream&, long&);
-    CARBON_API IBStream& operator >> (IBStream&, long long&);
-    CARBON_API IBStream& operator >> (IBStream&, unsigned char&);
-    CARBON_API IBStream& operator >> (IBStream&, unsigned short&);
-    CARBON_API IBStream& operator >> (IBStream&, unsigned int&);
-    CARBON_API IBStream& operator >> (IBStream&, unsigned long&);
-    CARBON_API IBStream& operator >> (IBStream&, unsigned long long&);
+            class StreamViewBase {
+            protected:
+                constexpr StreamViewBase(StreamBase& stream) : mStream(stream) {}
+                virtual ~StreamViewBase() {}
+                template <class StreamType>
+                constexpr StreamType& getStream() noexcept {
+                    return reinterpret_cast<StreamType&>(mStream);
+                }
+                template <class StreamType>
+                constexpr const StreamType& getStream() const noexcept {
+                    return reinterpret_cast<StreamType&>(mStream);
+                }
+            private:
+                StreamBase& mStream;
+            };
 
+            class RawIStreamView : StreamViewBase {
+            public:
+                RawIStreamView(IInputStream& stream) : StreamViewBase(stream) {}
+                void read(Byte* targetBuffer, long long readLengthByBytes) const noexcept { getStream<IInputStream>().read(targetBuffer, readLengthByBytes); }
+                int readSome(const Byte* targetBuffer, long long readLengthByBytes) const noexcept { getStream<IInputStream>().readSome(targetBuffer, readLengthByBytes); }
+                template <class T>
+                RawIStreamView& operator >> (T& in) { getStream<IInputStream>().read(&in, sizeof(T)); return *this; }
+            };
+
+        }
+    }
 }

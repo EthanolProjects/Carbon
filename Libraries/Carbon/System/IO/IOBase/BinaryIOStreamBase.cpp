@@ -2,8 +2,8 @@
 
 namespace Carbon {
 #define CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(type) IBStream & operator<<(IBStream &in, type var) {\
-    in.write(reinterpret_cast<Carbon::Byte*>(&var), sizeof(type)); return in; }
-#define CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(type) IBStream & operator>>(IBStream &out, type& var) {\
+    in.read(reinterpret_cast<Carbon::Byte*>(&var), sizeof(type)); return in; }
+#define CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(type) OBStream & operator>>(OBStream &out, type& var) {\
     out.write(reinterpret_cast<Carbon::Byte*>(&var), sizeof(type)); return out; }
     CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(char)
     CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(short)
