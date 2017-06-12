@@ -1,30 +1,24 @@
 #include "Carbon/System/IO/IOBase/BinaryIOStreamBase.hpp"
 
 namespace Carbon {
-#define CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(type) IBStream & operator<<(IBStream &in, type var) {\
-    in.read(reinterpret_cast<Carbon::Byte*>(&var), sizeof(type)); return in; }
-#define CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(type) OBStream & operator>>(OBStream &out, type& var) {\
-    out.write(reinterpret_cast<Carbon::Byte*>(&var), sizeof(type)); return out; }
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(char)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(short)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(int)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(long long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(unsigned char)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(unsigned short)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(unsigned int)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(unsigned long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION(unsigned long long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(char)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(short)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(int)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(long long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(unsigned char)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(unsigned short)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(unsigned int)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(unsigned long)
-    CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION(unsigned long long)
-#undef CARBON_BINARYIOSTREAMBASE_OPERATOR_READ_EXPANSION
-#undef CARBON_BINARYIOSTREAMBASE_OPERATOR_WRITE_EXPANSION
+    namespace System {
+        namespace IO {
+            inline StreamViewBase::StreamViewBase(StreamBase & stream) : mStream(stream) {}
+
+            inline StreamViewBase::~StreamViewBase() {}
+
+            inline RawIStreamView::RawIStreamView(IInputStream & stream) : StreamViewBase(stream) {}
+
+            inline void RawIStreamView::read(Byte * targetBuffer, long long readLengthByBytes) const { getStream<IInputStream>().read(targetBuffer, readLengthByBytes); }
+
+            inline int RawIStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) const noexcept { return getStream<IInputStream>().readSome(targetBuffer, readLengthByBytes); }
+
+            inline void RawOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) { getStream<IOutputStream>().write(targetBuffer, writeLengthByBytes); }
+
+            inline int RawOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) noexcept { return getStream<IOutputStream>().writeSome(targetBuffer, writeLengthByBytes); }
+
+            inline RawIOStreamView::RawIOStreamView(IIOStream & stream) : RawIStreamView(stream), RawOStreamView(stream), StreamViewBase(stream) {}
+
+        }
+    }
 }

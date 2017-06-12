@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\BinaryIOStreamBase.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.hpp" />
     <ClInclude Include="..\..\Libraries\Carbon\Concurrency\ThirdParty\LockFree\Queue.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +41,7 @@
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

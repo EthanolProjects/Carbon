@@ -117,6 +117,9 @@
     <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp">
       <Filter>Sub Libraries\System\Dynamic Library\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.hpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpPosix.cpp">
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp">
       <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.cpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
