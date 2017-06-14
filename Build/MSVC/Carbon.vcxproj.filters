@@ -111,13 +111,16 @@
     <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp">
       <Filter>Sub Libraries\Meta Programming\Template Meta Programming</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\BinaryIOStreamBase.hpp">
-      <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp">
       <Filter>Sub Libraries\System\Dynamic Library\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.hpp">
+    <ClInclude Include="..\..\Include\Carbon\System\IO\SyncIOConcepts.hpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Carbon\System\IO\AsyncIOConcepts.hpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Carbon\System\IO\Views\RawStreamView.hpp">
       <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -144,6 +147,9 @@
       <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.cpp">
+      <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\Views\RawStreamView.cpp">
       <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
     </ClCompile>
   </ItemGroup>
