@@ -117,10 +117,10 @@
     <ClInclude Include="..\..\Include\Carbon\System\IO\SyncIOConcepts.hpp">
       <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\IO\AsyncIOConcepts.hpp">
+    <ClInclude Include="..\..\Include\Carbon\System\IO\Views\RawStreamView.hpp">
       <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\IO\Views\RawStreamView.hpp">
+    <ClInclude Include="..\..\Include\Carbon\System\IO\Devices\File.hpp">
       <Filter>Sub Libraries\System\IO\IOBase\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -137,19 +137,16 @@
     <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpCommon.cpp">
       <Filter>Sub Libraries\Concurrency\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp">
-      <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp">
       <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp">
       <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.cpp">
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\Views\RawStreamView.cpp">
       <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\Views\RawStreamView.cpp">
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\Devices\File.cpp">
       <Filter>Sub Libraries\System\IO\IOBase\Source</Filter>
     </ClCompile>
   </ItemGroup>

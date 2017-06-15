@@ -15,43 +15,43 @@ namespace Carbon {
 
             RawIOStreamView::~RawIOStreamView() = default;
 
-            int RawIStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.peek(targetBuffer, readLengthByBytes);
             }
 
-            int RawIStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.read(targetBuffer, readLengthByBytes);
             }
 
-            int RawIStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) noexcept {
+            int64_t RawIStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.readSome(targetBuffer, readLengthByBytes);
             }
 
-            int RawOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
+            int64_t RawOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
                 return mStream.write(targetBuffer, writeLengthByBytes);
             }
 
-            int RawOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) noexcept {
+            int64_t RawOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) {
                 return mStream.writeSome(targetBuffer, writeLengthByBytes);
             }
 
-            int RawIOStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIOStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.peek(targetBuffer, readLengthByBytes);
             }
 
-            int RawIOStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIOStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.read(targetBuffer, readLengthByBytes);
             }
 
-            int RawIOStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) noexcept {
+            int64_t RawIOStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) {
                 return mStream.readSome(targetBuffer, readLengthByBytes);
             }
 
-            int RawIOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
+            int64_t RawIOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
                 return mStream.write(targetBuffer, writeLengthByBytes);
             }
 
-            int RawIOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) noexcept {
+            int64_t RawIOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) {
                 return mStream.writeSome(targetBuffer, writeLengthByBytes);
             }
         }

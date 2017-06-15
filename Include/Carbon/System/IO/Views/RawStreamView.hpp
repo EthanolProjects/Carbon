@@ -5,16 +5,16 @@ namespace Carbon {
     namespace System {
         namespace IO {
             struct IRawIStreamView {
-                virtual int peek(Byte* targetBuffer, long long readLengthByBytes) = 0;
-                virtual int read(Byte* targetBuffer, long long readLengthByBytes) = 0;
-                virtual int readSome(Byte* targetBuffer, long long readLengthByBytes) noexcept = 0;
+                virtual int64_t peek(Byte* targetBuffer, long long readLengthByBytes) = 0;
+                virtual int64_t read(Byte* targetBuffer, long long readLengthByBytes) = 0;
+                virtual int64_t readSome(Byte* targetBuffer, long long readLengthByBytes) = 0;
                 template <class T>
                 IRawIStreamView& operator >> (T& target) { read(&target, sizeof(T)); }
             };
 
             struct IRawOStreamView {
-                virtual int write(const Byte* targetBuffer, long long writeLengthByBytes) = 0;
-                virtual int writeSome(const Byte* targetBuffer, long long writeLengthByBytes) noexcept = 0;
+                virtual int64_t write(const Byte* targetBuffer, long long writeLengthByBytes) = 0;
+                virtual int64_t writeSome(const Byte* targetBuffer, long long writeLengthByBytes) = 0;
                 template <class T>
                 IRawIStreamView& operator << (const T& target) { write(&target, sizeof(T)); }
             };
@@ -24,9 +24,9 @@ namespace Carbon {
             struct CARBON_API RawIStreamView: IRawIStreamView {
                 RawIStreamView(IInputStream&);
                 ~RawIStreamView();
-                int peek(Byte*, long long) override;
-                int read(Byte*, long long) override;
-                int readSome(Byte*, long long) noexcept override;
+                int64_t peek(Byte*, long long) override;
+                int64_t read(Byte*, long long) override;
+                int64_t readSome(Byte*, long long) override;
             private:
                 IInputStream& mStream;
             };
@@ -34,8 +34,8 @@ namespace Carbon {
             struct CARBON_API RawOStreamView : IRawOStreamView {
                 RawOStreamView(IOutputStream&);
                 ~RawOStreamView();
-                int write(const Byte*, long long) override;
-                int writeSome(const Byte*, long long) noexcept override;
+                int64_t write(const Byte*, long long) override;
+                int64_t writeSome(const Byte*, long long) override;
             private:
                 IOutputStream& mStream;
             };
@@ -43,11 +43,11 @@ namespace Carbon {
             struct CARBON_API RawIOStreamView : IRawIOStreamView {
                 RawIOStreamView(IIOStream&);
                 ~RawIOStreamView();
-                int write(const Byte*, long long) override;
-                int writeSome(const Byte*, long long) noexcept override;
-                int peek(Byte*, long long) override;
-                int read(Byte*, long long) override;
-                int readSome(Byte*, long long) noexcept override;
+                int64_t write(const Byte*, long long) override;
+                int64_t writeSome(const Byte*, long long) override;
+                int64_t peek(Byte*, long long) override;
+                int64_t read(Byte*, long long) override;
+                int64_t readSome(Byte*, long long) override;
             private:
                 IIOStream& mStream;
             };

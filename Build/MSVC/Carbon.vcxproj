@@ -29,7 +29,7 @@
     <ClInclude Include="..\..\Include\Carbon\Math\Math.hpp" />
     <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\System\IO\AsyncIOConcepts.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\IO\Devices\File.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\IO\SyncIOConcepts.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\IO\Views\RawStreamView.hpp" />
     <ClInclude Include="..\..\Libraries\Carbon\Concurrency\ThirdParty\LockFree\Queue.hpp" />
@@ -41,8 +41,7 @@
     <ClCompile Include="..\..\Libraries\Carbon\Concurrency\LightFuture.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\IOSynchronizedFileAccess.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\IO\Devices\File.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\IO\Views\RawStreamView.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
