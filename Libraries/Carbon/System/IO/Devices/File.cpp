@@ -76,11 +76,11 @@ namespace Carbon {
                 return out.QuadPart;
             }
 
-            int64_t FileStream::peek(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t FileStream::peek(void* targetBuffer, int64_t readLengthByBytes) {
                 setp(-read(targetBuffer, readLengthByBytes));
             }
 
-            int64_t FileStream::read(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t FileStream::read(void* targetBuffer, int64_t readLengthByBytes) {
                 DWORD read;
                 _CheckStreamValidation(mFile);
                 if (!ReadFile(reinterpret_cast<HANDLE>(mFile), targetBuffer, readLengthByBytes, &read, nullptr))
@@ -88,7 +88,7 @@ namespace Carbon {
                 return read;
             }
 
-            int64_t FileStream::write(const Byte * targetBuffer, long long writeLengthByBytes) {
+            int64_t FileStream::write(const void* targetBuffer, int64_t writeLengthByBytes) {
                 DWORD written;
                 _CheckStreamValidation(mFile);
                 if (WriteFile(reinterpret_cast<HANDLE>(mFile), targetBuffer, writeLengthByBytes, &written, nullptr))
@@ -96,11 +96,11 @@ namespace Carbon {
                 return written;
             }
 
-            int64_t FileStream::readSome(Byte* targetBuffer, long long readLengthByBytes) {
+            int64_t FileStream::readSome(void* targetBuffer, int64_t readLengthByBytes) {
                 return read(targetBuffer, readLengthByBytes);
             }
 
-            int64_t FileStream::writeSome(const Byte* targetBuffer, long long writeLengthByBytes) {
+            int64_t FileStream::writeSome(const void* targetBuffer, int64_t writeLengthByBytes) {
                 return write(targetBuffer, writeLengthByBytes);
             }
 

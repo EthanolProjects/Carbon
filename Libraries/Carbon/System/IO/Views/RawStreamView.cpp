@@ -11,49 +11,30 @@ namespace Carbon {
 
             RawOStreamView::~RawOStreamView() = default;
 
-            RawIOStreamView::RawIOStreamView(IIOStream & s) : mStream(s) {}
+            RawIOStreamView::RawIOStreamView(IIOStream & s) : RawIStreamView(s), RawOStreamView(s) {}
 
             RawIOStreamView::~RawIOStreamView() = default;
 
-            int64_t RawIStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIStreamView::peek(void* targetBuffer, int64_t readLengthByBytes) {
                 return mStream.peek(targetBuffer, readLengthByBytes);
             }
 
-            int64_t RawIStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIStreamView::read(void* targetBuffer, int64_t readLengthByBytes) {
                 return mStream.read(targetBuffer, readLengthByBytes);
             }
 
-            int64_t RawIStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) {
+            int64_t RawIStreamView::readSome(void* targetBuffer, int64_t readLengthByBytes) {
                 return mStream.readSome(targetBuffer, readLengthByBytes);
             }
 
-            int64_t RawOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
+            int64_t RawOStreamView::write(const void* targetBuffer, int64_t writeLengthByBytes) {
                 return mStream.write(targetBuffer, writeLengthByBytes);
             }
 
-            int64_t RawOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) {
+            int64_t RawOStreamView::writeSome(const void* targetBuffer, int64_t writeLengthByBytes) {
                 return mStream.writeSome(targetBuffer, writeLengthByBytes);
             }
 
-            int64_t RawIOStreamView::peek(Byte * targetBuffer, long long readLengthByBytes) {
-                return mStream.peek(targetBuffer, readLengthByBytes);
-            }
-
-            int64_t RawIOStreamView::read(Byte * targetBuffer, long long readLengthByBytes) {
-                return mStream.read(targetBuffer, readLengthByBytes);
-            }
-
-            int64_t RawIOStreamView::readSome(Byte * targetBuffer, long long readLengthByBytes) {
-                return mStream.readSome(targetBuffer, readLengthByBytes);
-            }
-
-            int64_t RawIOStreamView::write(const Byte * targetBuffer, long long writeLengthByBytes) {
-                return mStream.write(targetBuffer, writeLengthByBytes);
-            }
-
-            int64_t RawIOStreamView::writeSome(const Byte * targetBuffer, long long writeLengthByBytes) {
-                return mStream.writeSome(targetBuffer, writeLengthByBytes);
-            }
         }
     }
 }

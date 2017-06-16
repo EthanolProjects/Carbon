@@ -14,11 +14,11 @@ namespace Carbon {
                 FileStream(const char* name); // For Testing
                 uint64_t tellp() const override;
                 uint64_t setp(int64_t offset, SRACBasePosition base = SRACCurrent) override;
-                int64_t peek(Byte* targetBuffer, long long readLengthByBytes) override;
-                int64_t read(Byte* targetBuffer, long long readLengthByBytes) override;
-                int64_t write(const Byte* targetBuffer, long long writeLengthByBytes) override;
-                int64_t readSome(Byte* targetBuffer, long long readLengthByBytes) override;
-                int64_t writeSome(const Byte* targetBuffer, long long writeLengthByBytes) override;
+                int64_t peek(void* targetBuffer, int64_t readLengthByBytes) override;
+                int64_t read(void* targetBuffer, int64_t readLengthByBytes) override;
+                int64_t write(const void* targetBuffer, int64_t writeLengthByBytes) override;
+                int64_t readSome(void* targetBuffer, int64_t readLengthByBytes) override;
+                int64_t writeSome(const void* targetBuffer, int64_t writeLengthByBytes) override;
             private:
 #if defined(CARBON_TARGET_WINDOWS)
                 void *mFile; // HANDLE mFile;
