@@ -2,6 +2,7 @@
 #include "Threadpool.hpp"
 #include "Carbon/MetaProgramming/Template/Mpl.hpp"
 #include <memory>
+#include <tuple>
 
 #pragma warning (push)
 #pragma warning (disable: 4250)

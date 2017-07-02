@@ -7,7 +7,7 @@ namespace Carbon {
         std::string spath(path);
         if (needSuffixAdded)
             spath += ".so";
-        mLibrary = dlopen(path.c_str(), RTLD_NOW);
+        mLibrary = dlopen(spath.c_str(), RTLD_NOW);
         auto error = dlerror();
         if (mLibrary == nullptr || error) {
             throw std::runtime_error(static_cast<char*>(error));

@@ -19,30 +19,23 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Include\Carbon\Concurrency\Concurrency.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\Concurrency\LightFuture.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\Concurrency\ParallelUtilities.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\Concurrency\Synchronization.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\Concurrency\Threadpool.hpp" />
     <ClInclude Include="..\..\Include\Carbon\Config\Config.hpp" />
     <ClInclude Include="..\..\Include\Carbon\Config\ConfigCompilerSlang.hpp" />
     <ClInclude Include="..\..\Include\Carbon\Config\ConfigPlatform.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\Math\Math.hpp" />
     <ClInclude Include="..\..\Include\Carbon\MetaProgramming\Template\Mpl.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\LightFuture.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\ParallelUtilities.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\Synchronization.hpp" />
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\Threadpool.hpp" />
     <ClInclude Include="..\..\Include\Carbon\System\DynamicLibrary\DynamicLibrary.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\System\IO\IOBase\BinaryIOStreamBase.hpp" />
-    <ClInclude Include="..\..\Include\Carbon\System\Memory\Memory.hpp" />
-    <ClInclude Include="..\..\Libraries\Carbon\Concurrency\ThirdParty\LockFree\Queue.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpCommon.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpPosix.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\ConcurrencyTpWindows.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\LightFuture.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\Concurrency\Synchronization.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\ConcurrencyTpPosix.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\ConcurrencyTpWindows.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\Synchronization.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCWindows.cpp" />
-    <ClCompile Include="..\..\Libraries\Carbon\System\IO\IOBase\BinaryIOStreamBase.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
