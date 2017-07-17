@@ -37,6 +37,9 @@
     <Filter Include="Sub Libraries\System\Concurrency\Source">
       <UniqueIdentifier>{8307a2e7-5666-4b49-be35-16b24540a441}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sub Libraries\System\Memory">
+      <UniqueIdentifier>{1b99f4d9-7731-4f99-aebd-d6918f8797ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\Carbon\Config\Config.hpp">
@@ -63,10 +66,16 @@
     <ClInclude Include="..\..\Include\Carbon\System\Concurrency\Threadpool.hpp">
       <Filter>Sub Libraries\System\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\LightFuture.hpp">
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency.hpp">
       <Filter>Sub Libraries\System\Concurrency\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Include\Carbon\System\Concurrency.hpp">
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\Promise.hpp">
+      <Filter>Sub Libraries\System\Concurrency\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Carbon\System\Memory\ReferenceCounted.hpp">
+      <Filter>Sub Libraries\System\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\Carbon\System\Concurrency\Pipeline.hpp">
       <Filter>Sub Libraries\System\Concurrency\Headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,5 +95,16 @@
     <ClCompile Include="..\..\Libraries\Carbon\System\DynamicLibrary\DynamicLibraryCPosix.cpp">
       <Filter>Sub Libraries\System\Dynamic Library\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\Promise.cpp">
+      <Filter>Sub Libraries\System\Concurrency\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Libaries\Carbon\System\Memory\ReferenceCounted.cpp">
+      <Filter>Sub Libraries\System\Memory</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Include\Carbon\System\Concurrency\Scheduled.hpp">
+      <Filter>Sub Libraries\System\Concurrency\Headers</Filter>
+    </None>
   </ItemGroup>
 </Project>

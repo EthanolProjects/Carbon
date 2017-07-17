@@ -21,7 +21,7 @@ namespace Carbon {
             void wait();
             template <class Rep, class Period>
             bool waitFor(const std::chrono::duration<Rep, Period>& rt) {
-                return xWaitFor(std::chrono::duration_cast<std::chrono::milliseconds>(rt).count());
+                return waitFor(std::chrono::duration_cast<std::chrono::milliseconds>(rt));
             }
             template<class Clock, class Duration>
             bool waitUntil(const std::chrono::time_point<Clock, Duration>& tt) {
@@ -29,7 +29,6 @@ namespace Carbon {
             }
             void* native() noexcept;
         private:
-            bool xWaitFor(unsigned long long milliseconds);
 #if defined(CARBON_TARGET_WINDOWS)
             void* mEvent; // HANDLE mEvent;
 #else
@@ -38,6 +37,8 @@ namespace Carbon {
             std::condition_variable mCondVar;
 #endif
         };
+
+        template <> CARBON_API bool Event::waitFor<long long, std::milli>(const std::chrono::milliseconds&);
 
     }
 }

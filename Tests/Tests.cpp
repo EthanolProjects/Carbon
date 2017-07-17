@@ -19,7 +19,7 @@ namespace CarbonTests {
         BEGIN_TEST_GROUP
 
             void testThreadPool(size_t testCount) {
-            std::vector<Carbon::Future<int>> futs; futs.reserve(testCount);
+            std::vector<Carbon::Promise<int>> futs; futs.reserve(testCount);
             std::atomic_size_t count{ 0 };
             for (size_t i = 0; i < testCount; ++i)
                 futs.push_back(Carbon::async([&] { ++count; return obj(); }));

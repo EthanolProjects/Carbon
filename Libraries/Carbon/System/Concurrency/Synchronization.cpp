@@ -26,8 +26,9 @@ namespace Carbon {
             return mEvent;
         }
 
-        bool Event::xWaitFor(unsigned long long milliseconds) {
-            auto stat = WaitForSingleObject(mEvent, milliseconds);
+        template <>
+        bool Event::waitFor<long long, std::milli>(const std::chrono::milliseconds& ms) {
+            auto stat = WaitForSingleObject(mEvent, ms.count());
             return stat == WAIT_OBJECT_0;
         }
 
@@ -57,10 +58,11 @@ namespace Carbon {
             return this;
         }
 
-        bool Event::xWaitFor(unsigned long long milliseconds) {
+        template <> 
+        bool Event::waitFor<long long, std::milli>(const std::chrono::milliseconds& ms) {
             std::unique_lock<std::mutex> lk(mMut);
             if (!mMode)
-                mCondVar.wait_for(lk, std::chrono::milliseconds(milliseconds));
+                mCondVar.wait_for(lk, ms);
         }
 #endif
     }

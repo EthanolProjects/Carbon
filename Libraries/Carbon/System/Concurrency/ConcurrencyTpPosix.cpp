@@ -6,27 +6,6 @@
 #ifdef CARBON_TARGET_POSIX
 namespace CarbonPosix {
     using namespace Carbon;
-    class TaskQueue {
-    public:
-        void push(AssocTpWorkStatShared* node) {
-            std::unique_lock<std::mutex> lk(mMutex);
-            mQueue.push(node);
-        }
-
-        bool pop(AssocTpWorkStatShared*& nodeOut) {
-            std::unique_lock<std::mutex> lk(mMutex);
-            if (mQueue.empty())
-                return false;
-            else {
-                nodeOut = mQueue.front();
-                mQueue.pop();
-            }
-            return true;
-        }
-    private:
-        std::mutex mMutex;
-        std::queue<AssocTpWorkStatShared*> mQueue;
-    };
 
     class Threadpool final{
     public:
@@ -35,53 +14,42 @@ namespace CarbonPosix {
                 mThreads.push_back(std::move(std::thread([this]() { worker(); })));
         }
         ~Threadpool() {
-            mStop.store(true);
-            wakeAllAndStopHolding();
-            for (auto&& thread : mThreads)
-                if (thread.joinable())
-                    thread.join();
+            std::unique_lock<std::mutex> lk(mMutex);
+            mRun = false;
+            mHoldVariable.notify_all();
+            for (auto&& thread : mThreads) if (thread.joinable()) thread.join();
         }
         void worker() noexcept {
-            while (!(mStop.load())) {
-                AssocTpWorkStatShared* task;
-                while (mQueue.pop(task)) {
+            AssocTpWorkStatShared* task = nullptr;
+            std::unique_lock<std::mutex> lk(mMutex);
+            for (;;) {
+                if (mQueue.size()) {
+                    task = mQueue.front();
+                    mQueue.pop();
+                    lk.unlock();
                     task->runWork();
-                    if (task->decCount() == 1)
-                        delete task;
+                    if (task->decCount() == 1) delete task;
+                    lk.lock();
                 }
-                holdCurrenctThread();
+                else 
+                    if (mRun) mHoldVariable.wait(lk); else return;
             }
         }
         void addTask(AssocTpWorkStatShared* task) {
+            std::unique_lock<std::mutex> lk(mMutex);
             task->incCount();
             mQueue.push(task);
-            wakeOneThread();
+            mHoldVariable.notify_one();
         }
         static auto& getInstance() {
             static Threadpool pool(std::thread::hardware_concurrency());
             return pool;
         }
-        void holdCurrenctThread() {
-            std::unique_lock<std::mutex> lk(mHoldMutex);
-            if (mIsHoldingAval)
-                mHoldVariable.wait(lk);
-        }
-        void wakeOneThread() {
-            std::unique_lock<std::mutex> lk(mHoldMutex);
-            mHoldVariable.notify_one();
-        }
-        void wakeAllAndStopHolding() {
-            std::unique_lock<std::mutex> lk(mHoldMutex);
-            mIsHoldingAval = false;
-            mHoldVariable.notify_all();
-        }
     private:
-        TaskQueue mQueue;
-        int mWaitCount{ 0 };
-        std::mutex mHoldMutex;
-        bool mIsHoldingAval{ true };
+        std::queue<AssocTpWorkStatShared*> mQueue;
+        bool mRun{ true };
+        std::mutex mMutex;
         std::condition_variable mHoldVariable;
-        volatile std::atomic_bool mStop{ false };
         std::vector<std::thread> mThreads;
     };
 }
@@ -89,38 +57,20 @@ namespace CarbonPosix {
 namespace Carbon {
     using namespace CarbonPosix;
 
-    AssocTpWorkStatShared::AssocTpWorkStatShared() : mEvent(false), mExceptionPointer(nullptr) {}
+    AssocTpWorkStatShared::AssocTpWorkStatShared() {}
 
     AssocTpWorkStatShared::~AssocTpWorkStatShared() {}
-
-    void AssocTpWorkStatShared::xGet() {
-        wait();
-        if (mExceptionPointer != nullptr)
-            std::rethrow_exception(mExceptionPointer);
-    }
 
     bool AssocTpWorkStatShared::xRunWork() {
         return true;
     }
 
-    void AssocTpWorkStatShared::wait() { mEvent.wait(); }
-
-    bool AssocTpWorkStatShared::xWaitFor(long long milli) {
-        return mEvent.waitFor(std::chrono::milliseconds(milli));
-    }
-
     bool AssocTpWorkStatShared::runWork() {
         try {
-            if (this->xRunWork()) {
-                mEvent.set();
-                return true;
-            }
-            else
-                return false;
+            return this->xRunWork();
         }
         catch (...) {
-            mExceptionPointer = std::current_exception();
-            mEvent.set();
+            setException(std::current_exception());
         }
         return true;
     }
