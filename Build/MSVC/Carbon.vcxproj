@@ -33,7 +33,7 @@
     <ClInclude Include="..\..\Include\Carbon\System\Memory\ReferenceCounted.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Libaries\Carbon\System\Memory\ReferenceCounted.cpp" />
+    <ClCompile Include="..\..\Libraries\Carbon\System\Memory\ReferenceCounted.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\ConcurrencyTpPosix.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\ConcurrencyTpWindows.cpp" />
     <ClCompile Include="..\..\Libraries\Carbon\System\Concurrency\Promise.cpp" />

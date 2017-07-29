@@ -69,7 +69,7 @@ namespace Carbon {
         Promise(const Promise&) = delete;
         Promise& operator = (const Promise&) = delete;
         Promise(Promise&& r) : x(r.x) { r.x = nullptr; }
-        Promise& operator = (Promise&& r) { x = r.x, r.x = nullptr; }
+        Promise& operator = (Promise&& r) { x = r.x, r.x = nullptr; return *this; }
         ~Promise() { if (x) if (x->decCount() == 1) delete x; }
         auto get() { return x->get(); }
         void wait() { x->wait(); }
@@ -88,7 +88,7 @@ namespace Carbon {
         Promise(const Promise&) = delete;
         Promise& operator = (const Promise&) = delete;
         Promise(Promise&& r) : x(r.x) { r.x = nullptr; }
-        Promise& operator = (Promise&& r) { x = r.x, r.x = nullptr; }
+        Promise& operator = (Promise&& r) { x = r.x, r.x = nullptr; return *this; }
         ~Promise() { if (x) if (x->decCount() == 1) delete x; }
         void get() { x->get(); }
         void wait() { x->wait(); }

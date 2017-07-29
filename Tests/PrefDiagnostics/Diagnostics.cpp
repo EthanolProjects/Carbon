@@ -1,5 +1,6 @@
 #include "Carbon/System/Concurrency.hpp"
 #include <vector>
+#include <cassert>
 #include <iostream>
 
 namespace CarbonTests {
@@ -21,11 +22,21 @@ namespace CarbonTests {
         for (auto&& a : futs)
             a.get();
     }
+
+    void testThreadPoolForEach(size_t testCount) {
+        std::atomic_int count{ 0 };
+        Carbon::asyncForRange(size_t(0), testCount, [&](size_t) { ++count; return obj(); }).get();
+        if (count != testCount) {
+            std::cout << "Expected:" << testCount << " Actual:" << count << std::endl;
+        }
+    }
+
 }
 
 int main() {
     for (int i = 0; i < 100; ++i) {
-        CarbonTests::testThreadPool(1000);
+        CarbonTests::testThreadPoolForEach(1000);
         std::cout << i << std::endl;
     }
+    system("pause");
 }

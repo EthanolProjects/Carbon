@@ -38,7 +38,7 @@ namespace Carbon {
 #endif
         };
 
-        template <> CARBON_API bool Event::waitFor<long long, std::milli>(const std::chrono::milliseconds&);
+        template <> CARBON_API bool Event::waitFor<std::chrono::milliseconds::rep, std::milli>(const std::chrono::milliseconds&);
 
     }
 }

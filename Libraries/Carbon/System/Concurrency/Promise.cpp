@@ -1,6 +1,10 @@
 #include "Carbon/System/Concurrency/Promise.hpp"
 #include <cassert>
 namespace Carbon {
+    namespace {
+        // Promise Internal Status Namesapce
+    }
+
     PromiseImplBase::PromiseImplBase() :mEvent(false), mStatus(Status::Waiting), mExceptionPointer() {}
 
     PromiseImplBase::~PromiseImplBase() {}
