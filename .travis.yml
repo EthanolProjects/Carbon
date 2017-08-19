@@ -22,6 +22,9 @@ matrix:
             - p7zip
             - cmake
             - cmake-data
+install:
+  - sudo ln -s /usr/bin/g++-6 /usr/bin/g++ -f
+  - sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc -f
 script:
   - cd bin
   - cmake .. -Wno-dev
