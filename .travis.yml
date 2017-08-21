@@ -25,22 +25,8 @@ matrix:
 install:
   - sudo ln -s /usr/bin/g++-6 /usr/bin/g++ -f
   - sudo ln -s /usr/bin/gcc-6 /usr/bin/gcc -f
-  - |
-    if [ ! -f ./googletest/cached_mark ];
-    then
-    git clone https://github.com/google/googletest --depth=1
-    cd ./googletest
-    cmake . -DCMAKE_BUILD_TYPE=Release
-    make
-    touch cached_mark
-    cd ..
-    fi
-  - cd ./googletest
-  - sudo make install
-  - cd ..
 script:
   - cd bin
   - cmake .. -Wno-dev
-  - make
-  - ./CarbonTest
+  - cmake --build . -- -j 4
   - cd ..
